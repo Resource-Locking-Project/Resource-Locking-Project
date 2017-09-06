@@ -4,6 +4,11 @@ import static org.mockito.Mockito.*;
 
 public class FourBitTwoDisclosureDeviceUnlockerTest {
     @Test
+    public void nullDeviceTest() {
+        FourBitTwoDisclosureDeviceUnlocker.unlock(null);
+    }
+
+    @Test
     /**
      * Ensures that the trace is showing accurate information.
      */

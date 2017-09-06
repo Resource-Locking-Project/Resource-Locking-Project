@@ -58,6 +58,10 @@ public class Device {
     private int state = 0;
 
     /**
+     * Accumulator for number of spins to do.
+     */
+    private int accumulator = 0;
+    /**
      * For testing, create a device and set its linear or polynomial turns relationship
      * @param initialBits the bit values for this test device
      * @param bitsPerPeek the number of bits to disclose via peek or set via poke
@@ -230,13 +234,13 @@ public class Device {
         if (all_false || all_true) return true;
         spins++;
         int i = 1;
-        if (random) numRotatesPerSpin = (int)(Math.random() * size);
-        while (i < numRotatesPerSpin % size) {
+        if (random) accumulator = (int)(Math.random() * size);
+        accumulator += spins * rotatesPerSpinMultiplier;
+        while (i < accumulator % size) {
             head = head.next;
             i++;
         }
         //System.out.println("spun " + (numRotatesPerSpin % size) + " times");
-        numRotatesPerSpin += spins * rotatesPerSpinMultiplier;
         //System.out.println(superPeek());
         return all_true || all_false;
     }
@@ -285,6 +289,7 @@ public class Device {
      * Poke bits into device.
      * @param pattern indicator of values of bits to poke
      */
+
     public void poke(CharSequence pattern) {
         if (state != STATE_PEEKED) return;
         state = STATE_POKED;

@@ -6,6 +6,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import static junit.framework.TestCase.fail;
 import static org.mockito.Mockito.spy;
 
 public class DeviceTest {
@@ -24,6 +25,7 @@ public class DeviceTest {
                 if (spins != null) System.out.println("spins: " + spins.getInt(dev));
             } catch (Exception e) {
                 e.printStackTrace();
+                fail();
             }
             System.out.println(dev.superPeek());
             assert(dev.superPeek().equals("[T, T, F, T]"));
@@ -33,9 +35,8 @@ public class DeviceTest {
     public void polynomialTest() {
         boolean[] initialBits = {true,true,false,true};
         boolean somePolynomialSpinsDoNotResetAfterSizeSpins = false;
-        for (int i = 2; i < initialBits.length * 2; i++) {
-            for (int j = 2; j < initialBits.length * 2; j++) {
-                if (j % 5 != 0) {
+        for (int i = 1; i < initialBits.length * 2; i++) {
+            for (int j = 1; j < initialBits.length * 2; j++) {
                     System.out.println(i + ", " + j);
                     Device dev = new Device(initialBits, 2, i, j);
                     for (int k = 0; k < 5; k++) {
@@ -47,12 +48,12 @@ public class DeviceTest {
                         spins.setAccessible(true);
                         if (spins != null) System.out.println("spins: " + spins.getInt(dev));
                     } catch (Exception e) {
+                        fail();
                         e.printStackTrace();
                     }
                     System.out.println(dev.superPeek());
                     if (!dev.superPeek().equals("[T, T, F, T]")) somePolynomialSpinsDoNotResetAfterSizeSpins = true;
                 }
-            }
         }
         assert(somePolynomialSpinsDoNotResetAfterSizeSpins);
     }
@@ -75,10 +76,7 @@ public class DeviceTest {
             if (!offsets.contains(offset)) offsets.add(offset);
             lastIndex = possibleConfigurations.indexOf(dev.superPeek());
         }
+        System.out.println(offsets);
         assert(offsets.size() > 1);
-    }
-    @Test
-    public void nullDeviceTest() {
-        FourBitTwoDisclosureDeviceUnlocker.unlock(null);
     }
 }
