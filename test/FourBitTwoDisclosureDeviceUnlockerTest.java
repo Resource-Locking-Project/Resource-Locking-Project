@@ -24,6 +24,7 @@ public class FourBitTwoDisclosureDeviceUnlockerTest {
         int spins, pokes, peeks;
         spins = pokes = peeks = 0;
         for (String atom : split) {
+            System.out.println(atom);
             if (atom.startsWith("spin")) spins++;
             else if (atom.startsWith("poke")) pokes++;
             else if (atom.startsWith("peek")) peeks++;

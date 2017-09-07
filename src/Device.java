@@ -1,5 +1,11 @@
+import java.util.ArrayList;
+
 public class Device {
     private Link<Character> head;
+    /**
+     * A list of requested positions from the last peek method
+     */
+    private ArrayList<Integer> requestedPositions;
     /**
      * Whether or not we are using pseudo-random number generators for arbitrary rotations per spin
      */
@@ -263,25 +269,22 @@ public class Device {
     public CharSequence peek(CharSequence pattern) {
         if (state != STATE_SPUN) return null;
         state = STATE_PEEKED;
+        if (pattern.length() != size) throw new IllegalArgumentException("pattern must be exactly " + size + " characters long");
+        requestedPositions = new ArrayList<Integer>();
         StringBuilder q = new StringBuilder(pattern);
         int numPeeked = 0;
         int f = -1;
-        del(q,"[");
-        del(q,"]");
-        del(q," ");
-        del(q,"\t");
         Link c = head;
-        StringBuilder out = new StringBuilder("[");
+        StringBuilder out = new StringBuilder("");
         for (int i = 0; i < q.length() && i < size; i++) {
             if (numPeeked < bitsPerPeek && q.charAt(i) == '?') {
+                requestedPositions.add(i);
                 out.append(c.data());
                 numPeeked++;
             }
             else out.append("-");
-            if (i < size - 1) out.append(" ");
             c = c.next;
         }
-        out.append("]");
         return out.toString();
     }
 
@@ -293,18 +296,19 @@ public class Device {
     public void poke(CharSequence pattern) {
         if (state != STATE_PEEKED) return;
         state = STATE_POKED;
+        if (pattern.length() != size) throw new IllegalArgumentException("pattern must be exactly " + size + " characters long");
         StringBuilder q = new StringBuilder(pattern);
         int numPoked = 0;
         int f = -1;
-        del(q,"[");
-        del(q,"]");
-        del(q," ");
-        del(q, "\t");
         Link c = head;
         for (int i = 0; i < q.length() && i < size; i++) {
-            if (numPoked < bitsPerPeek && (q.charAt(i) == VALUE_TRUE || q.charAt(i) == VALUE_FALSE)) {
-                numPoked++;
-                c.setData(q.charAt(i));
+            // they requested this location in their last peek
+            if (requestedPositions.contains(i)) {
+                // and it is within the limit of peeks
+                if (numPoked < bitsPerPeek && (q.charAt(i) == VALUE_TRUE || q.charAt(i) == VALUE_FALSE)) {
+                    numPoked++;
+                    c.setData(q.charAt(i));
+                }
             }
             c = c.next;
         }
