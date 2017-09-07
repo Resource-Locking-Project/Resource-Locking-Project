@@ -5,7 +5,7 @@ public class Device {
     /**
      * A list of requested positions from the last peek method
      */
-    private ArrayList<Integer> requestedPositions;
+    private List<Integer> requestedPositions;
     /**
      * Whether or not we are using pseudo-random number generators for arbitrary rotations per spin
      */
