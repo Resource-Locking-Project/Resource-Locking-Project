@@ -40,7 +40,7 @@ public class FourBitTwoDisclosureDeviceUnlockerTest {
     /**
      * unlock should halt/finish within 1/10th of a second.
      */
-    public void heuristicHaltingTest() {
+    public void heuristicHaltingTestForUnlock() {
         for (int i = 0; i < 10; i++) {
             Device dev = new Device();
             FourBitTwoDisclosureDeviceUnlocker.unlock(dev);
@@ -50,7 +50,7 @@ public class FourBitTwoDisclosureDeviceUnlockerTest {
     /**
      * This should test for 99% efficiency in unlocking all 3 kinds of devices: linear, polynomial, and random rotations.
      */
-    public void efficiencyTest() {
+    public void efficiencyTestForUnlock() {
         int successes = 0;
         for (int i = 0; i < 1000; i++) {
             Device dev = null;
