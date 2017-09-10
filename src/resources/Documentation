@@ -2,3 +2,67 @@
 In class our team gathered contact information, set up a group email chain for communication and started to talk about
 the time to get together and complete the team questionnaire. I (Kendra) had set up the email chain and a team account with
 a team repository to work on the project.
+
+-----------------------------------------------------------------------------------------------------------------------------
+
+9/10 Hangouts call log:
+
+  11:50am Maxwell, Daniel, Kendra, Hoyt, self present in Hangout
+  12:00am video call starts. Maxwell is absent from the call.
+    Daniel: “I wanted to talk about the problem really quick.”
+    Daniel: Multiple spins paired with a [ ? - - ? ] [ ? - ? - ] [ ? ? - - ] pattern have shown good results.
+      The specification says “For all intents, it is random.”, but we don’t really know.
+    Daniel has written a set of tests and implemented a prototype unlocker.
+    Alice's suggestion: if the heuristic fails, for some N iterations PEEK random patterns in an attempt
+      to solve the problem. Daniel agrees with this this approach.
+    Daniel suggestion: pair programming over Google Hangouts—the person sharing the screen would be the “driver”.
+      Hoyt also suggested pair programming physically after class.
+    Daniel suggests a volunteer for next class’s update. Kendra volunteers.
+
+    Daniel suggests splitting up remaining tasks: unlock(), showTrace()
+      Kendra: for each PEEK/SPIN/POKE, make private methods that add tracing info to the log using appendTrace()
+      Alice suggested tasks: algorithm/UNLOCK, interface/PEEK/SPIN/POKE, logging/APPENDTRACE/SHOWTRACE.
+
+    Roles assigned:
+      Dan—      reference; wrote the tests. Will be available for pair programming.
+      Kendra—   interface / doPeek() / doPoke() / doSpin()
+      Maxwell—  will pair program with someone TBA
+      Hoyt—     algorithm / unlock()
+      Alice—    logging / appendTrace() / showTrace()
+
+    Pair programming times (note: everyone mentioned weekend availability via Hangouts):
+      Dan—      Unknown (Tutoring). Should be available 7pm-10pm all weekdays.
+      Kendra—   Noon-4pm Tuesday/Thursday
+      Maxwell—  not present.
+      Hoyt—     Noon-1:30pm Tuesday/Thursday
+      Alice—    Before 10am, 4pm+ Tuesday/Thursday
+
+    Deliverable due 1 week from now
+    Documentation due 2 weeks from now
+    Kendra re: doSpin()— should spin multiple times with a parameter; each would be logged.
+    Daniel re: doPeek() / doPoke()— should verify the poke sets the same positions as the peek.
+    Kendra will deliver doSpin() / doPeek() / doPoke() headers early for Hoyt to work with.
+    Alice: how should the trace be formatted?
+      Daniel: designed test cases around [ _method_{: params }, … ]
+      Hoyt suggests breaking method calls up onto new lines instead
+        spin\n
+        peek( ? ? - - )\n
+        poke( T T - - )\n
+        etc…
+      Daniel and Alice agree; Daniel will update the test cases to reflect this.
+
+    Daniel: things to do after this meeting?
+      Daniel—   Will write test for showTrace()
+      Kendra—   Will contact Maxwell, doPeek(), doSpin(), doPoke()
+      Hoyt—     unlock() pseudocode, eventually actual code
+      Alice—    showTrace(), appendTrace() implementations
+
+    Kendra will also provide headers for showTrace() and appendTrace()
+    References for particular things
+      Daniel—   test cases
+      Kendra—   Java Strings
+
+  Kendra: pull request for headers in approx. an hour
+  Call ends at 12:53pm
+
+-----------------------------------------------------------------------------------------------------------------------------
