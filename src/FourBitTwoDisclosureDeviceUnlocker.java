@@ -80,4 +80,14 @@ public class FourBitTwoDisclosureDeviceUnlocker extends DeviceUnlocker {
 
     }
 
+
+    /**
+     * Appends a specified message to trace log in DeviceUnlocker, but allowing bits to be formatted
+     * in the message.
+     * @param methodCallMessage Message for the method call
+     * @param deviceBits the bits in the device returned.
+     */
+    private static void appendTrace(String methodCallMessage, CharSequence deviceBits) {
+
+    }
 }
