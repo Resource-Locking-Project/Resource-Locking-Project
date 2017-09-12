@@ -15,7 +15,7 @@ public class FourBitTwoDisclosureDeviceUnlockerTest {
     public void traceTest() {
         Device dev = spy(Device.class);
         FourBitTwoDisclosureDeviceUnlocker.unlock(dev);
-        // split it by comma
+        // split by new line character
         String[] split = FourBitTwoDisclosureDeviceUnlocker.showTrace().split("\n");
 
         int spins, pokes, peeks;
