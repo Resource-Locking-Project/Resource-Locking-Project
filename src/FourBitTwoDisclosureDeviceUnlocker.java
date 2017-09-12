@@ -19,6 +19,11 @@ public class FourBitTwoDisclosureDeviceUnlocker extends DeviceUnlocker {
     private String STATE = "";
 
     /**
+     * Static device to unlock
+     */
+    private static Device dev;
+
+    /**
      * Unlocks a device-controlled resource.
      * This method must be guaranteed to halt, regardless of
      * whether or not it successfully unlocked the resource.
@@ -27,6 +32,7 @@ public class FourBitTwoDisclosureDeviceUnlocker extends DeviceUnlocker {
      *         device are now identical); false otherwise
      */
     public static boolean unlock(final Device dev) {
+        FourBitTwoDisclosureDeviceUnlocker.dev = dev;
         return false;
     }
 
