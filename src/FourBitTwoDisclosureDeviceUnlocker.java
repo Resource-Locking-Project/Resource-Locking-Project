@@ -9,14 +9,14 @@
 public class FourBitTwoDisclosureDeviceUnlocker extends DeviceUnlocker {
 
     /** Pattern requested from doPeek. */
-    private CharSequence PEEKED_PATTERN = null;
+    private static CharSequence PEEKED_PATTERN = null;
 
     /**Holds the state of the unlock.
      * If just spun, state is SPIN
      * if just peeked, state is PEEK
      * if just poked, state is POKE
      */
-    private String STATE = "";
+    private static State STATE = State.NOTCREATED;
 
     /**
      * Static device to unlock
@@ -45,7 +45,25 @@ public class FourBitTwoDisclosureDeviceUnlocker extends DeviceUnlocker {
      * @param numOfSpins number of spins requested
      * @return true if all bits are the same value. False if values are different.
      */
-    private boolean doSpin(final int numOfSpins) {
+    private static boolean doSpin(final int numOfSpins) {
+        if(numOfSpins <= 0) {
+            appendTrace("Num of spins is negative, cannot spin a negative amount of times.");
+            return false;
+        } else if(STATE == State.NOTCREATED) {
+            appendTrace("Invalid state for spin - State is empty no device is created");
+            return false;
+        }
+
+        for(int i = 0; i < numOfSpins; i++) {
+            boolean result = dev.spin();
+
+            if(result) {
+                STATE = State.SPUN;
+                return true;
+            }
+        }
+
+        STATE = State.SPUN;
         return false;
     }
 
@@ -61,7 +79,7 @@ public class FourBitTwoDisclosureDeviceUnlocker extends DeviceUnlocker {
      * @param pattern to view two bits
      * @return the pattern given with the '?' replaced by peeked values(T/F)
      */
-    private CharSequence doPeek(final CharSequence pattern) {
+    private static CharSequence doPeek(final CharSequence pattern) {
         return null;
     }
 
@@ -75,7 +93,7 @@ public class FourBitTwoDisclosureDeviceUnlocker extends DeviceUnlocker {
      *  And invalid doPoke command is unspecified - in our implementation it will
      *  log 'invalid poke' and the current state unlock is in.
      */
-    private void doPoke() {
+    private static void doPoke() {
     }
 
     /**
