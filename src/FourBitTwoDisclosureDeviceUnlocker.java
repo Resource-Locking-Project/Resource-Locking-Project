@@ -9,14 +9,14 @@
 public class FourBitTwoDisclosureDeviceUnlocker extends DeviceUnlocker {
 
     /** Pattern requested from doPeek. */
-    private static CharSequence PEEKED_PATTERN = null;
+    private static CharSequence peekedPattern = null;
 
     /**Holds the state of the unlock.
      * If just spun, state is SPIN
      * if just peeked, state is PEEK
      * if just poked, state is POKE
      */
-    private static State STATE = State.NOTCREATED;
+    private static State state = State.NOTCREATED;
 
     /**
      * Static device to unlock
@@ -46,25 +46,30 @@ public class FourBitTwoDisclosureDeviceUnlocker extends DeviceUnlocker {
      * @return true if all bits are the same value. False if values are different.
      */
     private static boolean doSpin(final int numOfSpins) {
+        boolean result = false;
+        boolean continueSpin = true;
         if(numOfSpins <= 0) {
             appendTrace("Num of spins is negative, cannot spin a negative amount of times.");
-            return false;
-        } else if(STATE == State.NOTCREATED) {
-            appendTrace("Invalid state for spin - State is empty no device is created");
-            return false;
+            continueSpin = false;
+        } else if(state == State.NOTCREATED) {
+            appendTrace("Invalid state for spin - no device is created");
+            continueSpin = false;
         }
+        
+        if(continueSpin) {
+            for (int i = 0; i < numOfSpins; i++) {
+                appendTrace("doSpin");
+                result = dev.spin();
 
-        for(int i = 0; i < numOfSpins; i++) {
-            boolean result = dev.spin();
-
-            if(result) {
-                STATE = State.SPUN;
-                return true;
+                if (result) {
+                    state = State.SPUN;
+                    break;
+                }
             }
         }
 
-        STATE = State.SPUN;
-        return false;
+        state = State.SPUN;
+        return result;
     }
 
     /**
@@ -84,7 +89,7 @@ public class FourBitTwoDisclosureDeviceUnlocker extends DeviceUnlocker {
     }
 
     /**
-     * Modifies the state of the device pattern adhering to PEEKED_PATTERN.
+     * Modifies the state of the device pattern adhering to peekedPattern.
      * Can only modify the states of the pattern viewed by Peek.
      * doPoke can only be called under conditions:
      *  1) doPoke issued immediately following valid PEEK command

@@ -1,3 +1,4 @@
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.lang.reflect.Field;
@@ -80,19 +81,19 @@ public class FourBitTwoDisclosureDeviceUnlockerTest {
         devFeild.setAccessible(true);
         devFeild.set(FourBitTwoDisclosureDeviceUnlocker.class, device);
 
-        Field stateFeild = FourBitTwoDisclosureDeviceUnlocker.class.getDeclaredField("STATE");
+        Field stateFeild = FourBitTwoDisclosureDeviceUnlocker.class.getDeclaredField("state");
         stateFeild.setAccessible(true);
         State state = (State) stateFeild.get(FourBitTwoDisclosureDeviceUnlocker.class);
 
-        assert (State.NOTCREATED.equals(state));
+        Assert.assertTrue(State.NOTCREATED.equals(state));
         boolean result = (boolean) doSpin.invoke(FourBitTwoDisclosureDeviceUnlocker.class, 5);
-        assert (!result);
+        Assert.assertFalse(result);
 
         result = (boolean) doSpin.invoke(FourBitTwoDisclosureDeviceUnlocker.class, 0);
-        assert (!result);
+        Assert.assertFalse(result);
 
         result = (boolean) doSpin.invoke(FourBitTwoDisclosureDeviceUnlocker.class, -1);
-        assert (!result);
+        Assert.assertFalse(result);
     }
 
 
@@ -106,20 +107,20 @@ public class FourBitTwoDisclosureDeviceUnlockerTest {
         devField.setAccessible(true);
         devField.set(FourBitTwoDisclosureDeviceUnlocker.class, device);
 
-        Field stateFeild = FourBitTwoDisclosureDeviceUnlocker.class.getDeclaredField("STATE");
+        Field stateFeild = FourBitTwoDisclosureDeviceUnlocker.class.getDeclaredField("state");
         stateFeild.setAccessible(true);
         stateFeild.set(FourBitTwoDisclosureDeviceUnlocker.class, State.CREATED);
 
         boolean result = (boolean) doSpin.invoke(FourBitTwoDisclosureDeviceUnlocker.class, 1);
         State state = (State) stateFeild.get(FourBitTwoDisclosureDeviceUnlocker.class);
-        assert (state.equals(State.SPUN));
-        assert(!result);
+        Assert.assertTrue(state.equals(State.SPUN));
+        Assert.assertFalse(result);
 
 
         result = (boolean) doSpin.invoke(FourBitTwoDisclosureDeviceUnlocker.class, 5);
         state = (State) stateFeild.get(FourBitTwoDisclosureDeviceUnlocker.class);
-        assert (state.equals(State.SPUN));
-        assert(!result);
+        Assert.assertTrue(state.equals(State.SPUN));
+        Assert.assertFalse(result);
 
         boolean[] bits = {true, true, true, true};
         device = new Device(bits, 2);
@@ -127,25 +128,25 @@ public class FourBitTwoDisclosureDeviceUnlockerTest {
         stateFeild.set(FourBitTwoDisclosureDeviceUnlocker.class, State.CREATED);
         result = (boolean) doSpin.invoke(FourBitTwoDisclosureDeviceUnlocker.class, 5);
         state = (State) stateFeild.get(FourBitTwoDisclosureDeviceUnlocker.class);
-        assert (state.equals(State.SPUN));
-        assert (result);
+        Assert.assertTrue(state.equals(State.SPUN));
+        Assert.assertTrue(result);
 
         stateFeild.set(FourBitTwoDisclosureDeviceUnlocker.class, State.SPUN);
         result = (boolean) doSpin.invoke(FourBitTwoDisclosureDeviceUnlocker.class, 5);
         state = (State) stateFeild.get(FourBitTwoDisclosureDeviceUnlocker.class);
-        assert (state.equals(State.SPUN));
-        assert(result);
+        Assert.assertTrue(state.equals(State.SPUN));
+        Assert.assertTrue(result);
 
         stateFeild.set(FourBitTwoDisclosureDeviceUnlocker.class, State.POKED);
         result = (boolean) doSpin.invoke(FourBitTwoDisclosureDeviceUnlocker.class, 5);
         state = (State) stateFeild.get(FourBitTwoDisclosureDeviceUnlocker.class);
-        assert (state.equals(State.SPUN));
-        assert(result);
+        Assert.assertTrue(state.equals(State.SPUN));
+        Assert.assertTrue(result);
 
         stateFeild.set(FourBitTwoDisclosureDeviceUnlocker.class, State.PEEKED);
         result = (boolean) doSpin.invoke(FourBitTwoDisclosureDeviceUnlocker.class, 5);
         state = (State) stateFeild.get(FourBitTwoDisclosureDeviceUnlocker.class);
-        assert (state.equals(State.SPUN));
-        assert(result);
+        Assert.assertTrue(state.equals(State.SPUN));
+        Assert.assertTrue(result);
     }
 }
