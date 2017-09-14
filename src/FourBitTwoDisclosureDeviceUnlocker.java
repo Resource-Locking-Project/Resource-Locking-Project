@@ -1,3 +1,6 @@
+import javax.sound.midi.Sequence;
+import java.util.List;
+
 /**
  * Solution development for 4-bit/2-disclosure device.
  * @author Kendra Lamb
@@ -52,7 +55,24 @@ public class FourBitTwoDisclosureDeviceUnlocker extends DeviceUnlocker {
      *         device are now identical); false otherwise
      */
     public static boolean unlock(final Device dev) {
+        if (dev != null) {
+            state = STATE_CREATED;
+        }
         FourBitTwoDisclosureDeviceUnlocker.dev = dev;
+        boolean isUnlocked = doSpin();
+        List<CharSequence> perms = getPermutations();
+        int n = numOfBits;
+        while ((!isUnlocked) && (n > 0)) {
+            for (CharSequence perm : perms) {
+                doPeek(perm);
+                doPoke();
+                isUnlocked = doSpin(n);
+                if (isUnlocked) {
+                    break;
+                }
+            }
+            n--;
+        }
         return false;
     }
 
