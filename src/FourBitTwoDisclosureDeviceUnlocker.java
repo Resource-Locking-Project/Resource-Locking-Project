@@ -9,14 +9,31 @@
 public class FourBitTwoDisclosureDeviceUnlocker extends DeviceUnlocker {
 
     /** Pattern requested from doPeek. */
-    private CharSequence PEEKED_PATTERN = null;
+    private static CharSequence peekedPattern = null;
 
-    /**Holds the state of the unlock.
-     * If just spun, state is SPIN
-     * if just peeked, state is PEEK
-     * if just poked, state is POKE
-     */
-    private String STATE = "";
+    /** Number of Bits for Device */
+    private static final int numOfBits = 4;
+
+    /** Char we are changing device bits to default to 'T'*/
+    private static final char changeBitTo = 'T';
+
+    /**State before device is created, spun, poked, or peeked */
+    private static final int STATE_NOT_CREATED = 0;
+
+    /**State after device is created */
+    private static final int STATE_CREATED = 1;
+
+    /**State after device is spun.*/
+    private static final int STATE_SPUN = 2;
+
+    /**State after device is peeked */
+    private static final int STATE_PEEKED = 3;
+
+    /**State after device is poked */
+    private static final int STATE_POKED = 4;
+
+    /**Holds the state of the unlock.*/
+    private static int state = STATE_NOT_CREATED;
 
     /**
      * Static device to unlock
@@ -45,8 +62,58 @@ public class FourBitTwoDisclosureDeviceUnlocker extends DeviceUnlocker {
      * @param numOfSpins number of spins requested
      * @return true if all bits are the same value. False if values are different.
      */
-    private boolean doSpin(final int numOfSpins) {
-        return false;
+    private static boolean doSpin(final int numOfSpins) {
+        boolean result = false;
+
+        if(isValidSpin(numOfSpins)) {
+            for (int i = 0; i < numOfSpins; i++) {
+                appendTrace("doSpin");
+                result = dev.spin();
+
+                if (result) {
+                    break;
+                }
+            }
+            state = STATE_SPUN;
+        }
+
+        return result;
+    }
+
+    /**
+     * Checks current state and spins the device once.
+     * @return result of spin
+     */
+    private static boolean doSpin() {
+        boolean result;
+        if(state != STATE_NOT_CREATED) {
+            result = dev.spin();
+        } else {
+            appendTrace("Spin not valid: State is NOT_CREATED");
+            result = false;
+        }
+        return  result;
+    }
+
+    /**
+     * Checks if the current state is valid. Also checks if the number of Spins
+     * is greater than 0.
+     * @param numOfSpins Amount of times wished to spin
+     * @return if the spin call can continue
+     */
+    private static boolean isValidSpin(final int numOfSpins) {
+        boolean continueSpin;
+
+        if(numOfSpins <= 0) {
+            appendTrace("Num of spins is negative, cannot spin a negative amount of times.");
+            continueSpin = false;
+        } else if(state == STATE_NOT_CREATED) {
+            appendTrace("Invalid state for spin - no device is created");
+            continueSpin = false;
+        } else {
+            continueSpin = true;
+        }
+        return continueSpin;
     }
 
     /**
@@ -61,12 +128,12 @@ public class FourBitTwoDisclosureDeviceUnlocker extends DeviceUnlocker {
      * @param pattern to view two bits
      * @return the pattern given with the '?' replaced by peeked values(T/F)
      */
-    private CharSequence doPeek(final CharSequence pattern) {
+    private static CharSequence doPeek(final CharSequence pattern) {
         return null;
     }
 
     /**
-     * Modifies the state of the device pattern adhering to PEEKED_PATTERN.
+     * Modifies the state of the device pattern adhering to peekedPattern.
      * Can only modify the states of the pattern viewed by Peek.
      * doPoke can only be called under conditions:
      *  1) doPoke issued immediately following valid PEEK command
@@ -75,7 +142,7 @@ public class FourBitTwoDisclosureDeviceUnlocker extends DeviceUnlocker {
      *  And invalid doPoke command is unspecified - in our implementation it will
      *  log 'invalid poke' and the current state unlock is in.
      */
-    private void doPoke() {
+    private static void doPoke() {
     }
 
     /**
