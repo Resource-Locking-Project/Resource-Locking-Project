@@ -14,7 +14,7 @@ public class FourBitTwoDisclosureDeviceUnlockerTest {
     }
 
     @Test
-    /**
+    /*
      * Ensures that the trace is showing accurate information.
      */
     public void traceTest() {
@@ -39,7 +39,7 @@ public class FourBitTwoDisclosureDeviceUnlockerTest {
     }
 
     @Test(timeout=1000)
-    /**
+    /*
      * unlock should halt/finish within 1/10th of a second.
      */
     public void heuristicHaltingTestForUnlock() {
@@ -49,7 +49,7 @@ public class FourBitTwoDisclosureDeviceUnlockerTest {
         }
     }
     @Test
-    /**
+    /*
      * This should test for 99% efficiency in unlocking all 3 kinds of devices: linear, polynomial, and random rotations.
      */
     public void efficiencyTestForUnlock() {
@@ -155,5 +155,391 @@ public class FourBitTwoDisclosureDeviceUnlockerTest {
         state = (int) stateField.get(FourBitTwoDisclosureDeviceUnlocker.class);
         Assert.assertTrue(state == stateSpun);
         Assert.assertTrue(result);
+    }
+
+
+    @Test
+    public void testInvalidPeekedPatternCall() throws Exception {
+        Device device = new Device();
+        int created = 1;
+        int statePeeked = 3;
+        int statePoked = 4;
+
+        Field devField = FourBitTwoDisclosureDeviceUnlocker.class.getDeclaredField("dev");
+        devField.setAccessible(true);
+        devField.set(FourBitTwoDisclosureDeviceUnlocker.class, device);
+
+        Field stateField = FourBitTwoDisclosureDeviceUnlocker.class.getDeclaredField("state");
+        stateField.setAccessible(true);
+        stateField.set(FourBitTwoDisclosureDeviceUnlocker.class, created);
+
+        Method doSpin = FourBitTwoDisclosureDeviceUnlocker.class.getDeclaredMethod("doSpin", int.class);
+        doSpin.setAccessible(true);
+
+        doSpin.invoke(FourBitTwoDisclosureDeviceUnlocker.class, 1);
+        Method doPeek = FourBitTwoDisclosureDeviceUnlocker.class.getDeclaredMethod("doPeek", CharSequence.class);
+        doPeek.setAccessible(true);
+
+        CharSequence requestPattern = "----";
+        doSpin.invoke(FourBitTwoDisclosureDeviceUnlocker.class, 1);
+        stateField.set(FourBitTwoDisclosureDeviceUnlocker.class, created);
+        CharSequence pattern = (CharSequence) doPeek.invoke(FourBitTwoDisclosureDeviceUnlocker.class, requestPattern);
+        int state = (int) stateField.get(FourBitTwoDisclosureDeviceUnlocker.class);
+
+        Assert.assertTrue(requestPattern.equals(pattern));
+        Assert.assertTrue(state == created);
+
+        requestPattern = "????";
+        doSpin.invoke(FourBitTwoDisclosureDeviceUnlocker.class, 1);
+        stateField.set(FourBitTwoDisclosureDeviceUnlocker.class, created);
+        pattern = (CharSequence) doPeek.invoke(FourBitTwoDisclosureDeviceUnlocker.class, requestPattern);
+        state = (int) stateField.get(FourBitTwoDisclosureDeviceUnlocker.class);
+
+        Assert.assertTrue(requestPattern.equals(pattern));
+        Assert.assertTrue(pattern.length() == requestPattern.length());
+        Assert.assertTrue(state == created);
+
+        requestPattern = "?-??";
+        doSpin.invoke(FourBitTwoDisclosureDeviceUnlocker.class, 1);
+        stateField.set(FourBitTwoDisclosureDeviceUnlocker.class, created);
+        pattern = (CharSequence) doPeek.invoke(FourBitTwoDisclosureDeviceUnlocker.class, requestPattern);
+        state = (int) stateField.get(FourBitTwoDisclosureDeviceUnlocker.class);
+
+        Assert.assertTrue(requestPattern.equals(pattern));
+        Assert.assertTrue(pattern.length() == requestPattern.length());
+        Assert.assertTrue(state == created);
+
+        requestPattern = "?---";
+        doSpin.invoke(FourBitTwoDisclosureDeviceUnlocker.class, 1);
+        stateField.set(FourBitTwoDisclosureDeviceUnlocker.class, created);
+        pattern = (CharSequence) doPeek.invoke(FourBitTwoDisclosureDeviceUnlocker.class, requestPattern);
+        Assert.assertTrue(requestPattern.equals(pattern));
+        Assert.assertTrue(pattern.length() == requestPattern.length());
+        state = (int) stateField.get(FourBitTwoDisclosureDeviceUnlocker.class);
+        Assert.assertTrue(state == created);
+
+        requestPattern = "????--";
+        doSpin.invoke(FourBitTwoDisclosureDeviceUnlocker.class, 1);
+        stateField.set(FourBitTwoDisclosureDeviceUnlocker.class, created);
+        pattern = (CharSequence) doPeek.invoke(FourBitTwoDisclosureDeviceUnlocker.class, requestPattern);
+        state = (int) stateField.get(FourBitTwoDisclosureDeviceUnlocker.class);
+
+        Assert.assertTrue(requestPattern.equals(pattern));
+        Assert.assertTrue(pattern.length() == requestPattern.length());
+        Assert.assertTrue(state == created);
+
+
+        requestPattern = "??-";
+        doSpin.invoke(FourBitTwoDisclosureDeviceUnlocker.class, 1);
+        stateField.set(FourBitTwoDisclosureDeviceUnlocker.class, created);
+        pattern = (CharSequence) doPeek.invoke(FourBitTwoDisclosureDeviceUnlocker.class, requestPattern);
+        state = (int) stateField.get(FourBitTwoDisclosureDeviceUnlocker.class);
+
+        Assert.assertTrue(requestPattern.equals(pattern));
+        Assert.assertTrue(pattern.length() == requestPattern.length());
+        Assert.assertTrue(state == created);
+
+        requestPattern = "";
+        doSpin.invoke(FourBitTwoDisclosureDeviceUnlocker.class, 1);
+        stateField.set(FourBitTwoDisclosureDeviceUnlocker.class, created);
+        pattern = (CharSequence) doPeek.invoke(FourBitTwoDisclosureDeviceUnlocker.class, requestPattern);
+        state = (int) stateField.get(FourBitTwoDisclosureDeviceUnlocker.class);
+
+        Assert.assertTrue(requestPattern.equals(pattern));
+        Assert.assertTrue(pattern.length() == requestPattern.length());
+        Assert.assertTrue(state == created);
+
+        requestPattern = "???----------?";
+        doSpin.invoke(FourBitTwoDisclosureDeviceUnlocker.class, 1);
+        stateField.set(FourBitTwoDisclosureDeviceUnlocker.class, created);
+        pattern = (CharSequence) doPeek.invoke(FourBitTwoDisclosureDeviceUnlocker.class, requestPattern);
+        state = (int) stateField.get(FourBitTwoDisclosureDeviceUnlocker.class);
+
+        Assert.assertTrue(requestPattern.equals(pattern));
+        Assert.assertTrue(pattern.length() == requestPattern.length());
+        Assert.assertTrue(state == created);
+
+
+        requestPattern = "?--?";
+        doSpin.invoke(FourBitTwoDisclosureDeviceUnlocker.class, 1);
+        stateField.set(FourBitTwoDisclosureDeviceUnlocker.class, statePeeked);
+        pattern = (CharSequence) doPeek.invoke(FourBitTwoDisclosureDeviceUnlocker.class, requestPattern);
+        state = (int) stateField.get(FourBitTwoDisclosureDeviceUnlocker.class);
+
+        Assert.assertTrue(requestPattern.equals(pattern));
+        Assert.assertTrue(pattern.length() == requestPattern.length());
+        Assert.assertTrue(state == statePeeked);
+
+
+        requestPattern = "?--?";
+        doSpin.invoke(FourBitTwoDisclosureDeviceUnlocker.class, 1);
+        stateField.set(FourBitTwoDisclosureDeviceUnlocker.class, statePoked);
+        pattern = (CharSequence) doPeek.invoke(FourBitTwoDisclosureDeviceUnlocker.class, requestPattern);
+        state = (int) stateField.get(FourBitTwoDisclosureDeviceUnlocker.class);
+
+        Assert.assertTrue(requestPattern.equals(pattern));
+        Assert.assertTrue(pattern.length() == requestPattern.length());
+        Assert.assertTrue(state == statePoked);
+
+
+        requestPattern = "?--?---";
+        doSpin.invoke(FourBitTwoDisclosureDeviceUnlocker.class, 1);
+        stateField.set(FourBitTwoDisclosureDeviceUnlocker.class, statePeeked);
+        pattern = (CharSequence) doPeek.invoke(FourBitTwoDisclosureDeviceUnlocker.class, requestPattern);
+        state = (int) stateField.get(FourBitTwoDisclosureDeviceUnlocker.class);
+
+        Assert.assertTrue(requestPattern.equals(pattern));
+        Assert.assertTrue(pattern.length() == requestPattern.length());
+        Assert.assertTrue(state == statePeeked);
+
+        stateField.set(FourBitTwoDisclosureDeviceUnlocker.class, statePoked);
+        requestPattern = "?--?---";
+        doSpin.invoke(FourBitTwoDisclosureDeviceUnlocker.class, 1);
+        stateField.set(FourBitTwoDisclosureDeviceUnlocker.class, statePoked);
+        pattern = (CharSequence) doPeek.invoke(FourBitTwoDisclosureDeviceUnlocker.class, requestPattern);
+        state = (int) stateField.get(FourBitTwoDisclosureDeviceUnlocker.class);
+
+        Assert.assertTrue(requestPattern.equals(pattern));
+        Assert.assertTrue(pattern.length() == requestPattern.length());
+        Assert.assertTrue(state == statePoked);
+
+
+        requestPattern = "????";
+        doSpin.invoke(FourBitTwoDisclosureDeviceUnlocker.class, 1);
+        stateField.set(FourBitTwoDisclosureDeviceUnlocker.class, statePeeked);
+        pattern = (CharSequence) doPeek.invoke(FourBitTwoDisclosureDeviceUnlocker.class, requestPattern);
+        state = (int) stateField.get(FourBitTwoDisclosureDeviceUnlocker.class);
+
+        Assert.assertTrue(requestPattern.equals(pattern));
+        Assert.assertTrue(pattern.length() == requestPattern.length());
+        Assert.assertTrue(state == statePeeked);
+
+
+        requestPattern = "????";
+        doSpin.invoke(FourBitTwoDisclosureDeviceUnlocker.class, 1);
+        stateField.set(FourBitTwoDisclosureDeviceUnlocker.class, statePoked);
+        pattern = (CharSequence) doPeek.invoke(FourBitTwoDisclosureDeviceUnlocker.class, requestPattern);
+        state = (int) stateField.get(FourBitTwoDisclosureDeviceUnlocker.class);
+
+        Assert.assertTrue(requestPattern.equals(pattern));
+        Assert.assertTrue(pattern.length() == requestPattern.length());
+        Assert.assertTrue(state == statePoked);
+
+
+        requestPattern = "";
+        doSpin.invoke(FourBitTwoDisclosureDeviceUnlocker.class, 1);
+        stateField.set(FourBitTwoDisclosureDeviceUnlocker.class, statePeeked);
+        pattern = (CharSequence) doPeek.invoke(FourBitTwoDisclosureDeviceUnlocker.class, requestPattern);
+        state = (int) stateField.get(FourBitTwoDisclosureDeviceUnlocker.class);
+
+        Assert.assertTrue(requestPattern.equals(pattern));
+        Assert.assertTrue(pattern.length() == requestPattern.length());
+        Assert.assertTrue(state == statePeeked);
+
+
+        requestPattern = "";
+        doSpin.invoke(FourBitTwoDisclosureDeviceUnlocker.class, 1);
+        stateField.set(FourBitTwoDisclosureDeviceUnlocker.class, statePoked);
+        pattern = (CharSequence) doPeek.invoke(FourBitTwoDisclosureDeviceUnlocker.class, requestPattern);
+        state = (int) stateField.get(FourBitTwoDisclosureDeviceUnlocker.class);
+
+        Assert.assertTrue(requestPattern.equals(pattern));
+        Assert.assertTrue(pattern.length() == requestPattern.length());
+        Assert.assertTrue(state == statePoked);
+    }
+
+
+    @Test
+    public void testValidDoPeekCalls()  throws Exception {
+        int stateCreated = 1;
+        int statePeeked = 3;
+        Device device = new Device();
+
+        Field devField = FourBitTwoDisclosureDeviceUnlocker.class.getDeclaredField("dev");
+        devField.setAccessible(true);
+        devField.set(FourBitTwoDisclosureDeviceUnlocker.class, device);
+
+        Field stateField = FourBitTwoDisclosureDeviceUnlocker.class.getDeclaredField("state");
+        stateField.setAccessible(true);
+        stateField.set(FourBitTwoDisclosureDeviceUnlocker.class, stateCreated);
+        Method doSpin = FourBitTwoDisclosureDeviceUnlocker.class.getDeclaredMethod("doSpin", int.class);
+        doSpin.setAccessible(true);
+
+        Method doPeek = FourBitTwoDisclosureDeviceUnlocker.class.getDeclaredMethod("doPeek", CharSequence.class);
+        doPeek.setAccessible(true);
+
+        CharSequence requestPattern = "??--";
+        doSpin.invoke(FourBitTwoDisclosureDeviceUnlocker.class, 1);
+        CharSequence returnPattern = (CharSequence) doPeek.invoke(FourBitTwoDisclosureDeviceUnlocker.class, requestPattern);
+        int state = (int) stateField.get(FourBitTwoDisclosureDeviceUnlocker.class);
+
+        Assert.assertTrue(returnPattern.length() == requestPattern.length());
+        Assert.assertTrue((returnPattern.charAt(0) == 'T') || (returnPattern.charAt(0) == 'F'));
+        Assert.assertTrue((returnPattern.charAt(1) == 'T') || (returnPattern.charAt(1) == 'F'));
+        Assert.assertTrue(returnPattern.charAt(2) == '-');
+        Assert.assertTrue(returnPattern.charAt(3) == '-');
+        Assert.assertTrue(state == statePeeked);
+
+
+        requestPattern = "?-?-";
+        doSpin.invoke(FourBitTwoDisclosureDeviceUnlocker.class, 1);
+        returnPattern = (CharSequence) doPeek.invoke(FourBitTwoDisclosureDeviceUnlocker.class, requestPattern);
+        state = (int) stateField.get(FourBitTwoDisclosureDeviceUnlocker.class);
+
+        Assert.assertTrue(returnPattern.length() == requestPattern.length());
+        Assert.assertTrue((returnPattern.charAt(0) == 'T') || (returnPattern.charAt(0) == 'F'));
+        Assert.assertTrue((returnPattern.charAt(2) == 'T') || (returnPattern.charAt(2) == 'F'));
+        Assert.assertTrue(returnPattern.charAt(1) == '-');
+        Assert.assertTrue(returnPattern.charAt(3) == '-');
+        Assert.assertTrue(state == statePeeked);
+
+        requestPattern = "?--?";
+        doSpin.invoke(FourBitTwoDisclosureDeviceUnlocker.class, 1);
+        returnPattern = (CharSequence) doPeek.invoke(FourBitTwoDisclosureDeviceUnlocker.class, requestPattern);
+        state = (int) stateField.get(FourBitTwoDisclosureDeviceUnlocker.class);
+
+        Assert.assertTrue(returnPattern.length() == requestPattern.length());
+        Assert.assertTrue((returnPattern.charAt(0) == 'T') || (returnPattern.charAt(0) == 'F'));
+        Assert.assertTrue((returnPattern.charAt(3) == 'T') || (returnPattern.charAt(3) == 'F'));
+        Assert.assertTrue(returnPattern.charAt(1) == '-');
+        Assert.assertTrue(returnPattern.charAt(2) == '-');
+        Assert.assertTrue(state == statePeeked);
+
+        requestPattern = "-?-?";
+        doSpin.invoke(FourBitTwoDisclosureDeviceUnlocker.class, 1);
+        returnPattern = (CharSequence) doPeek.invoke(FourBitTwoDisclosureDeviceUnlocker.class, requestPattern);
+        state = (int) stateField.get(FourBitTwoDisclosureDeviceUnlocker.class);
+
+        Assert.assertTrue(returnPattern.length() == requestPattern.length());
+        Assert.assertTrue((returnPattern.charAt(1) == 'T') || (returnPattern.charAt(1) == 'F'));
+        Assert.assertTrue((returnPattern.charAt(3) == 'T') || (returnPattern.charAt(3) == 'F'));
+        Assert.assertTrue(returnPattern.charAt(0) == '-');
+        Assert.assertTrue(returnPattern.charAt(2) == '-');
+        Assert.assertTrue(state == statePeeked);
+
+        requestPattern = "-??-";
+        doSpin.invoke(FourBitTwoDisclosureDeviceUnlocker.class, 1);
+        returnPattern = (CharSequence) doPeek.invoke(FourBitTwoDisclosureDeviceUnlocker.class, requestPattern);
+        state = (int) stateField.get(FourBitTwoDisclosureDeviceUnlocker.class);
+
+        Assert.assertTrue(returnPattern.length() == requestPattern.length());
+        Assert.assertTrue((returnPattern.charAt(1) == 'T') || (returnPattern.charAt(1) == 'F'));
+        Assert.assertTrue((returnPattern.charAt(2) == 'T') || (returnPattern.charAt(2) == 'F'));
+        Assert.assertTrue(returnPattern.charAt(0) == '-');
+        Assert.assertTrue(returnPattern.charAt(3) == '-');
+        Assert.assertTrue(state == statePeeked);
+
+        requestPattern = "--??";
+        doSpin.invoke(FourBitTwoDisclosureDeviceUnlocker.class, 1);
+        returnPattern = (CharSequence) doPeek.invoke(FourBitTwoDisclosureDeviceUnlocker.class, requestPattern);
+        state = (int) stateField.get(FourBitTwoDisclosureDeviceUnlocker.class);
+
+        Assert.assertTrue(returnPattern.length() == requestPattern.length());
+        Assert.assertTrue((returnPattern.charAt(2) == 'T') || (returnPattern.charAt(2) == 'F'));
+        Assert.assertTrue((returnPattern.charAt(3) == 'T') || (returnPattern.charAt(3) == 'F'));
+        Assert.assertTrue(returnPattern.charAt(0) == '-');
+        Assert.assertTrue(returnPattern.charAt(1) == '-');
+        Assert.assertTrue(state == statePeeked);
+    }
+
+    @Test
+    public void testInvalidPokeCall() throws Exception {
+        int stateNotCreated = 0;
+        int stateCreated = 1;
+        int stateSpun = 2;
+        int statePeeked = 3;
+        int statePoked = 4;
+        Device device = new Device();
+
+        Field devField = FourBitTwoDisclosureDeviceUnlocker.class.getDeclaredField("dev");
+        devField.setAccessible(true);
+        devField.set(FourBitTwoDisclosureDeviceUnlocker.class, device);
+
+        Field stateField = FourBitTwoDisclosureDeviceUnlocker.class.getDeclaredField("state");
+        stateField.setAccessible(true);
+        stateField.set(FourBitTwoDisclosureDeviceUnlocker.class, stateCreated);
+
+        Field peekedPatternField = FourBitTwoDisclosureDeviceUnlocker.class.getDeclaredField("peekedPattern");
+        peekedPatternField.setAccessible(true);
+
+        Field changeBitToField = FourBitTwoDisclosureDeviceUnlocker.class.getDeclaredField("changeBitTo");
+        changeBitToField.setAccessible(true);
+
+        Method doPoke = FourBitTwoDisclosureDeviceUnlocker.class.getDeclaredMethod("doPoke");
+        doPoke.setAccessible(true);
+
+        //Invalid State
+        peekedPatternField.set(FourBitTwoDisclosureDeviceUnlocker.class, "?--?");
+        stateField.set(FourBitTwoDisclosureDeviceUnlocker.class, stateNotCreated);
+        doPoke.invoke(FourBitTwoDisclosureDeviceUnlocker.class);
+        int state = (int) stateField.get(FourBitTwoDisclosureDeviceUnlocker.class);
+        Assert.assertTrue(state == stateNotCreated);
+
+        stateField.set(FourBitTwoDisclosureDeviceUnlocker.class, stateCreated);
+        doPoke.invoke(FourBitTwoDisclosureDeviceUnlocker.class);
+        state = (int) stateField.get(FourBitTwoDisclosureDeviceUnlocker.class);
+        Assert.assertTrue(state == stateCreated);
+
+        stateField.set(FourBitTwoDisclosureDeviceUnlocker.class, stateSpun);
+        doPoke.invoke(FourBitTwoDisclosureDeviceUnlocker.class);
+        state = (int) stateField.get(FourBitTwoDisclosureDeviceUnlocker.class);
+        Assert.assertTrue(state == stateSpun);
+
+        stateField.set(FourBitTwoDisclosureDeviceUnlocker.class, statePoked);
+        doPoke.invoke(FourBitTwoDisclosureDeviceUnlocker.class);
+        state = (int) stateField.get(FourBitTwoDisclosureDeviceUnlocker.class);
+        Assert.assertTrue(state == statePoked);
+
+        //Invalid peekedPattern
+        peekedPatternField.set(FourBitTwoDisclosureDeviceUnlocker.class, null);
+        stateField.set(FourBitTwoDisclosureDeviceUnlocker.class, statePeeked);
+        doPoke.invoke(FourBitTwoDisclosureDeviceUnlocker.class);
+        state = (int) stateField.get(FourBitTwoDisclosureDeviceUnlocker.class);
+        Assert.assertTrue(state == statePeeked);
+
+        //Invalid change bit
+        peekedPatternField.set(FourBitTwoDisclosureDeviceUnlocker.class, "?--?");
+        stateField.set(FourBitTwoDisclosureDeviceUnlocker.class, statePeeked);
+        changeBitToField.set(FourBitTwoDisclosureDeviceUnlocker.class, 'G');
+        doPoke.invoke(FourBitTwoDisclosureDeviceUnlocker.class);
+        state = (int) stateField.get(FourBitTwoDisclosureDeviceUnlocker.class);
+        Assert.assertTrue(state == statePeeked);
+    }
+
+    @Test
+    public void testValidDoPokeCalls() throws Exception {
+        int statePeeked = 3;
+        int statePoked = 4;
+        String requestPattern = "?--?";
+        Device device = new Device();
+
+        Field devField = FourBitTwoDisclosureDeviceUnlocker.class.getDeclaredField("dev");
+        devField.setAccessible(true);
+        devField.set(FourBitTwoDisclosureDeviceUnlocker.class, device);
+
+        Field stateField = FourBitTwoDisclosureDeviceUnlocker.class.getDeclaredField("state");
+        stateField.setAccessible(true);
+        stateField.set(FourBitTwoDisclosureDeviceUnlocker.class, statePeeked);
+
+        Field peekedPatternField = FourBitTwoDisclosureDeviceUnlocker.class.getDeclaredField("peekedPattern");
+        peekedPatternField.setAccessible(true);
+        peekedPatternField.set(FourBitTwoDisclosureDeviceUnlocker.class, requestPattern);
+
+        Field changeBitToField = FourBitTwoDisclosureDeviceUnlocker.class.getDeclaredField("changeBitTo");
+        changeBitToField.setAccessible(true);
+
+        Method doPoke = FourBitTwoDisclosureDeviceUnlocker.class.getDeclaredMethod("doPoke");
+        doPoke.setAccessible(true);
+
+        doPoke.invoke(FourBitTwoDisclosureDeviceUnlocker.class);
+        int state = (int) stateField.get(FourBitTwoDisclosureDeviceUnlocker.class);
+        Assert.assertTrue(state == statePoked);
+
+
+        peekedPatternField.set(FourBitTwoDisclosureDeviceUnlocker.class, requestPattern);
+        stateField.set(FourBitTwoDisclosureDeviceUnlocker.class, statePeeked);
+        doPoke.invoke(FourBitTwoDisclosureDeviceUnlocker.class);
+        state = (int) stateField.get(FourBitTwoDisclosureDeviceUnlocker.class);
+        Assert.assertTrue(state == statePoked);
     }
 }
