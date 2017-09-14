@@ -11,12 +11,23 @@ public class FourBitTwoDisclosureDeviceUnlocker extends DeviceUnlocker {
     /** Pattern requested from doPeek. */
     private static CharSequence peekedPattern = null;
 
-    /**Holds the state of the unlock.
-     * If just spun, state is SPIN
-     * if just peeked, state is PEEK
-     * if just poked, state is POKE
-     */
-    private static State state = State.NOTCREATED;
+    /**State before device is created, spun, poked, or peeked */
+    private static final int STATE_NOT_CREATED = 0;
+
+    /**State after device is created */
+    private static final int STATE_CREATED = 1;
+
+    /**State after device is spun.*/
+    private static final int STATE_SPUN = 2;
+
+    /**State after device is peeked */
+    private static final int STATE_PEEKED = 3;
+
+    /**State after device is poked */
+    private static final int STATE_POKED = 4;
+
+    /**Holds the state of the unlock.*/
+    private static int state = STATE_NOT_CREATED;
 
     /**
      * Static device to unlock
@@ -47,29 +58,41 @@ public class FourBitTwoDisclosureDeviceUnlocker extends DeviceUnlocker {
      */
     private static boolean doSpin(final int numOfSpins) {
         boolean result = false;
-        boolean continueSpin = true;
-        if(numOfSpins <= 0) {
-            appendTrace("Num of spins is negative, cannot spin a negative amount of times.");
-            continueSpin = false;
-        } else if(state == State.NOTCREATED) {
-            appendTrace("Invalid state for spin - no device is created");
-            continueSpin = false;
-        }
-        
-        if(continueSpin) {
+
+        if(isValidSpin(numOfSpins)) {
             for (int i = 0; i < numOfSpins; i++) {
                 appendTrace("doSpin");
                 result = dev.spin();
 
                 if (result) {
-                    state = State.SPUN;
                     break;
                 }
             }
+            state = STATE_SPUN;
         }
 
-        state = State.SPUN;
         return result;
+    }
+
+    /**
+     * Checks if the current state is valid. Also checks if the number of Spins
+     * is greater than 0.
+     * @param numOfSpins Amount of times wished to spin
+     * @return if the spin call can continue
+     */
+    private static boolean isValidSpin(final int numOfSpins) {
+        boolean continueSpin;
+
+        if(numOfSpins <= 0) {
+            appendTrace("Num of spins is negative, cannot spin a negative amount of times.");
+            continueSpin = false;
+        } else if(state == STATE_NOT_CREATED) {
+            appendTrace("Invalid state for spin - no device is created");
+            continueSpin = false;
+        } else {
+            continueSpin = true;
+        }
+        return continueSpin;
     }
 
     /**

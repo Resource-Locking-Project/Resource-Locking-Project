@@ -74,32 +74,8 @@ public class FourBitTwoDisclosureDeviceUnlockerTest {
     @Test
     public void testDoSpinInvalidCall() throws NoSuchMethodException, NoSuchFieldException, IllegalAccessException, InvocationTargetException {
         Device device = new Device();
-        Method doSpin = FourBitTwoDisclosureDeviceUnlocker.class.getDeclaredMethod("doSpin", int.class);
-        doSpin.setAccessible(true);
+        int stateCreated = 1;
 
-        Field devFeild = FourBitTwoDisclosureDeviceUnlocker.class.getDeclaredField("dev");
-        devFeild.setAccessible(true);
-        devFeild.set(FourBitTwoDisclosureDeviceUnlocker.class, device);
-
-        Field stateFeild = FourBitTwoDisclosureDeviceUnlocker.class.getDeclaredField("state");
-        stateFeild.setAccessible(true);
-        State state = (State) stateFeild.get(FourBitTwoDisclosureDeviceUnlocker.class);
-
-        Assert.assertTrue(State.NOTCREATED.equals(state));
-        boolean result = (boolean) doSpin.invoke(FourBitTwoDisclosureDeviceUnlocker.class, 5);
-        Assert.assertFalse(result);
-
-        result = (boolean) doSpin.invoke(FourBitTwoDisclosureDeviceUnlocker.class, 0);
-        Assert.assertFalse(result);
-
-        result = (boolean) doSpin.invoke(FourBitTwoDisclosureDeviceUnlocker.class, -1);
-        Assert.assertFalse(result);
-    }
-
-
-    @Test
-    public void testDoSpinValidCalls() throws NoSuchMethodException, NoSuchFieldException, IllegalAccessException, InvocationTargetException {
-        Device device = new Device();
         Method doSpin = FourBitTwoDisclosureDeviceUnlocker.class.getDeclaredMethod("doSpin", int.class);
         doSpin.setAccessible(true);
 
@@ -107,46 +83,81 @@ public class FourBitTwoDisclosureDeviceUnlockerTest {
         devField.setAccessible(true);
         devField.set(FourBitTwoDisclosureDeviceUnlocker.class, device);
 
-        Field stateFeild = FourBitTwoDisclosureDeviceUnlocker.class.getDeclaredField("state");
-        stateFeild.setAccessible(true);
-        stateFeild.set(FourBitTwoDisclosureDeviceUnlocker.class, State.CREATED);
+        Field stateField = FourBitTwoDisclosureDeviceUnlocker.class.getDeclaredField("state");
+        stateField.setAccessible(true);
+        stateField.set(FourBitTwoDisclosureDeviceUnlocker.class, stateCreated);
+        int state = (int) stateField.get(FourBitTwoDisclosureDeviceUnlocker.class);
+        Assert.assertTrue(stateCreated == state);
+
+        boolean result = (boolean) doSpin.invoke(FourBitTwoDisclosureDeviceUnlocker.class, 5);
+        Assert.assertFalse(result);
+        Assert.assertTrue(stateCreated == state);
+
+        result = (boolean) doSpin.invoke(FourBitTwoDisclosureDeviceUnlocker.class, 0);
+        Assert.assertFalse(result);
+        Assert.assertTrue(stateCreated == state);
+
+        result = (boolean) doSpin.invoke(FourBitTwoDisclosureDeviceUnlocker.class, -1);
+        Assert.assertFalse(result);
+        Assert.assertTrue(stateCreated == state);
+    }
+
+
+    @Test
+    public void testDoSpinValidCalls() throws NoSuchMethodException, NoSuchFieldException, IllegalAccessException, InvocationTargetException {
+        Device device = new Device();
+        int stateSpun= 2;
+        int created = 1;
+        int statePoked = 4;
+        int statePeeked = 3;
+
+        Method doSpin = FourBitTwoDisclosureDeviceUnlocker.class.getDeclaredMethod("doSpin", int.class);
+        doSpin.setAccessible(true);
+
+        Field devField = FourBitTwoDisclosureDeviceUnlocker.class.getDeclaredField("dev");
+        devField.setAccessible(true);
+        devField.set(FourBitTwoDisclosureDeviceUnlocker.class, device);
+
+        Field stateField = FourBitTwoDisclosureDeviceUnlocker.class.getDeclaredField("state");
+        stateField.setAccessible(true);
+        stateField.set(FourBitTwoDisclosureDeviceUnlocker.class, 1);
 
         boolean result = (boolean) doSpin.invoke(FourBitTwoDisclosureDeviceUnlocker.class, 1);
-        State state = (State) stateFeild.get(FourBitTwoDisclosureDeviceUnlocker.class);
-        Assert.assertTrue(state.equals(State.SPUN));
+        int state = (int) stateField.get(FourBitTwoDisclosureDeviceUnlocker.class);
+        Assert.assertTrue(state == stateSpun);
         Assert.assertFalse(result);
 
 
         result = (boolean) doSpin.invoke(FourBitTwoDisclosureDeviceUnlocker.class, 5);
-        state = (State) stateFeild.get(FourBitTwoDisclosureDeviceUnlocker.class);
-        Assert.assertTrue(state.equals(State.SPUN));
+        state = (int) stateField.get(FourBitTwoDisclosureDeviceUnlocker.class);
+        Assert.assertTrue(state == stateSpun);
         Assert.assertFalse(result);
 
         boolean[] bits = {true, true, true, true};
         device = new Device(bits, 2);
         devField.set(FourBitTwoDisclosureDeviceUnlocker.class, device);
-        stateFeild.set(FourBitTwoDisclosureDeviceUnlocker.class, State.CREATED);
+        stateField.set(FourBitTwoDisclosureDeviceUnlocker.class, created);
         result = (boolean) doSpin.invoke(FourBitTwoDisclosureDeviceUnlocker.class, 5);
-        state = (State) stateFeild.get(FourBitTwoDisclosureDeviceUnlocker.class);
-        Assert.assertTrue(state.equals(State.SPUN));
+        state = (int) stateField.get(FourBitTwoDisclosureDeviceUnlocker.class);
+        Assert.assertTrue(state == stateSpun);
         Assert.assertTrue(result);
 
-        stateFeild.set(FourBitTwoDisclosureDeviceUnlocker.class, State.SPUN);
+        stateField.set(FourBitTwoDisclosureDeviceUnlocker.class, stateSpun);
         result = (boolean) doSpin.invoke(FourBitTwoDisclosureDeviceUnlocker.class, 5);
-        state = (State) stateFeild.get(FourBitTwoDisclosureDeviceUnlocker.class);
-        Assert.assertTrue(state.equals(State.SPUN));
+        state = (int) stateField.get(FourBitTwoDisclosureDeviceUnlocker.class);
+        Assert.assertTrue(state == stateSpun);
         Assert.assertTrue(result);
 
-        stateFeild.set(FourBitTwoDisclosureDeviceUnlocker.class, State.POKED);
+        stateField.set(FourBitTwoDisclosureDeviceUnlocker.class, statePoked);
         result = (boolean) doSpin.invoke(FourBitTwoDisclosureDeviceUnlocker.class, 5);
-        state = (State) stateFeild.get(FourBitTwoDisclosureDeviceUnlocker.class);
-        Assert.assertTrue(state.equals(State.SPUN));
+        state = (int) stateField.get(FourBitTwoDisclosureDeviceUnlocker.class);
+        Assert.assertTrue(state == stateSpun);
         Assert.assertTrue(result);
 
-        stateFeild.set(FourBitTwoDisclosureDeviceUnlocker.class, State.PEEKED);
+        stateField.set(FourBitTwoDisclosureDeviceUnlocker.class, statePeeked);
         result = (boolean) doSpin.invoke(FourBitTwoDisclosureDeviceUnlocker.class, 5);
-        state = (State) stateFeild.get(FourBitTwoDisclosureDeviceUnlocker.class);
-        Assert.assertTrue(state.equals(State.SPUN));
+        state = (int) stateField.get(FourBitTwoDisclosureDeviceUnlocker.class);
+        Assert.assertTrue(state == stateSpun);
         Assert.assertTrue(result);
     }
 }
