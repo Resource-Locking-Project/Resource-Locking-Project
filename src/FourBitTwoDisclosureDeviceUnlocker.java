@@ -8,15 +8,6 @@
  */
 public class FourBitTwoDisclosureDeviceUnlocker extends DeviceUnlocker {
 
-    /** Pattern requested from doPeek. */
-    private static CharSequence peekedPattern = null;
-
-    /** Number of Bits for Device */
-    private static final int numOfBits = 4;
-
-    /** Char we are changing device bits to default to 'T'*/
-    private static final char changeBitTo = 'T';
-
     /**State before device is created, spun, poked, or peeked */
     private static final int STATE_NOT_CREATED = 0;
 
@@ -39,6 +30,18 @@ public class FourBitTwoDisclosureDeviceUnlocker extends DeviceUnlocker {
      * Static device to unlock
      */
     private static Device dev;
+
+    /** Pattern requested from doPeek. */
+    private static CharSequence peekedPattern = null;
+
+    /** Char we are changing device bits to default to 'T'*/
+    private static char changeBitTo = 'T';
+
+    /** Number of Bits for Device */
+    private static final int numOfBits = 4;
+
+    /** Number of bits that are disclosed*/
+    private static final int numOfBitsDisclosed = 2;
 
     /**
      * Unlocks a device-controlled resource.
@@ -129,7 +132,42 @@ public class FourBitTwoDisclosureDeviceUnlocker extends DeviceUnlocker {
      * @return the pattern given with the '?' replaced by peeked values(T/F)
      */
     private static CharSequence doPeek(final CharSequence pattern) {
-        return null;
+        CharSequence returnPattern;
+        boolean validPattern = isPeekValid(pattern);
+
+        if(validPattern) {
+            appendTrace("doPeek with pattern", pattern);
+            returnPattern = dev.peek(pattern);
+            peekedPattern = returnPattern;
+            appendTrace("return peekedPattern", returnPattern);
+            state = STATE_PEEKED;
+        } else {
+            appendTrace("doPeek: invalid doPeek call with bits", pattern);
+            returnPattern = pattern;
+        }
+
+        return returnPattern;
+    }
+
+    private static boolean isPeekValid(CharSequence pattern) {
+        boolean validLength = false;
+        boolean validRequestPattern = false;
+        if(pattern != null) {
+            int patternLength = pattern.length();
+            validLength = patternLength == numOfBits;
+
+            int countOfRequestedBits = 0;
+            for(int i = 0; i < patternLength; i++) {
+                char bit = pattern.charAt(i);
+                if(bit == '?') {
+                    countOfRequestedBits++;
+                }
+            }
+
+            validRequestPattern = countOfRequestedBits == numOfBitsDisclosed;
+        }
+
+        return validLength && validRequestPattern && state == STATE_SPUN;
     }
 
     /**
@@ -143,6 +181,45 @@ public class FourBitTwoDisclosureDeviceUnlocker extends DeviceUnlocker {
      *  log 'invalid poke' and the current state unlock is in.
      */
     private static void doPoke() {
+        if(isValidPoke()) {
+            CharSequence patternToPoke = getPokedPattern();
+            appendTrace("Poking with pattern:", patternToPoke);
+            dev.poke(patternToPoke);
+            state = STATE_POKED;
+        }
+    }
+
+    private static boolean isValidPoke() {
+        boolean isValid;
+        String validBits = "TF";
+        if(state != STATE_PEEKED){
+            appendTrace("Poke is not valid, current state does not equal STATE_PEEKED");
+            isValid = false;
+        } else if(!validBits.contains(String.valueOf(changeBitTo))) {
+            appendTrace("Bit to change to is invalid: ", String.valueOf(changeBitTo));
+            isValid = false;
+        } else if(peekedPattern == null) {
+            appendTrace("Peeked Pattern is null and cannot determine poke pattern", peekedPattern);
+            isValid = false;
+        } else {
+            isValid = true;
+        }
+
+        return isValid;
+    }
+
+    private static CharSequence getPokedPattern() {
+        StringBuilder newPattern = new StringBuilder();
+        for(int i = 0; i < peekedPattern.length(); i++) {
+            char bit = peekedPattern.charAt(i);
+
+            if(bit == '?') {
+                newPattern.append(changeBitTo);
+            } else {
+                newPattern.append(bit);
+            }
+        }
+        return newPattern.toString();
     }
 
     /**
