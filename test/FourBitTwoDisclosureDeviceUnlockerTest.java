@@ -15,16 +15,12 @@ public class FourBitTwoDisclosureDeviceUnlockerTest {
     public void traceTest() {
         Device dev = spy(Device.class);
         FourBitTwoDisclosureDeviceUnlocker.unlock(dev);
-        StringBuilder stringBuilder = new StringBuilder(FourBitTwoDisclosureDeviceUnlocker.showTrace());
-        // chop off the brackets
-        String test = stringBuilder.substring(1,stringBuilder.length() - 1);
-        // split it by comma
-        String[] split = test.split(", ");
+        // split by new line character
+        String[] split = FourBitTwoDisclosureDeviceUnlocker.showTrace().split("\n");
 
         int spins, pokes, peeks;
         spins = pokes = peeks = 0;
         for (String atom : split) {
-            System.out.println(atom);
             if (atom.startsWith("spin")) spins++;
             else if (atom.startsWith("poke")) pokes++;
             else if (atom.startsWith("peek")) peeks++;
