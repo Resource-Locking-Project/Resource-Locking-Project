@@ -11,6 +11,12 @@ public class FourBitTwoDisclosureDeviceUnlocker extends DeviceUnlocker {
     /** Pattern requested from doPeek. */
     private static CharSequence peekedPattern = null;
 
+    /** Number of Bits for Device */
+    private static final int numOfBits = 4;
+
+    /** Char we are changing device bits to default to 'T'*/
+    private static final char changeBitTo = 'T';
+
     /**State before device is created, spun, poked, or peeked */
     private static final int STATE_NOT_CREATED = 0;
 
@@ -72,6 +78,21 @@ public class FourBitTwoDisclosureDeviceUnlocker extends DeviceUnlocker {
         }
 
         return result;
+    }
+
+    /**
+     * Checks current state and spins the device once.
+     * @return result of spin
+     */
+    private static boolean doSpin() {
+        boolean result;
+        if(state != STATE_NOT_CREATED) {
+            result = dev.spin();
+        } else {
+            appendTrace("Spin not valid: State is NOT_CREATED");
+            result = false;
+        }
+        return  result;
     }
 
     /**
