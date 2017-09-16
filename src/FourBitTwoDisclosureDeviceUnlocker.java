@@ -110,7 +110,7 @@ public class FourBitTwoDisclosureDeviceUnlocker extends DeviceUnlocker {
             }
             state = STATE_SPUN;
         } else {
-          appendTrace("spin : Spin is not valid");
+          appendTrace("doSpin : Spin is not valid");
         }
 
         return result;
@@ -126,7 +126,7 @@ public class FourBitTwoDisclosureDeviceUnlocker extends DeviceUnlocker {
             result = dev.spin();
             appendTrace("spin : performing a spin");
         } else {
-            appendTrace("spin : Spin not valid: State is NOT_CREATED");
+            appendTrace("doSpin : Spin not valid: State is NOT_CREATED");
             result = false;
         }
         return  result;
@@ -176,7 +176,7 @@ public class FourBitTwoDisclosureDeviceUnlocker extends DeviceUnlocker {
             appendTrace("return peekedPattern", returnPattern);
             state = STATE_PEEKED;
         } else {
-            appendTrace("peek : invalid doPeek call with bits", pattern);
+            appendTrace("doPeek : invalid doPeek call with bits", pattern);
             returnPattern = pattern;
         }
 
@@ -227,13 +227,13 @@ public class FourBitTwoDisclosureDeviceUnlocker extends DeviceUnlocker {
         boolean isValid;
         String validBits = "TF";
         if(state != STATE_PEEKED){
-            appendTrace("poke : Poke is not valid, current state does not equal STATE_PEEKED");
+            appendTrace("isValidPoke : Poke is not valid, current state does not equal STATE_PEEKED");
             isValid = false;
         } else if(!validBits.contains(String.valueOf(changeBitTo))) {
-            appendTrace("poke : Bit to change to is invalid: ", String.valueOf(changeBitTo));
+            appendTrace("isValidPoke : Bit to change to is invalid: ", String.valueOf(changeBitTo));
             isValid = false;
         } else if(peekedPattern == null) {
-            appendTrace("poke : Peeked Pattern is null and cannot determine poke pattern", peekedPattern);
+            appendTrace("isValidPoke : Peeked Pattern is null and cannot determine poke pattern", peekedPattern);
             isValid = false;
         } else {
             isValid = true;

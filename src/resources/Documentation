@@ -68,3 +68,4 @@ a team repository to work on the project.
 -----------------------------------------------------------------------------------------------------------------------------
 
 9/14 7:00-7:35pm - Wrote implementations for showTrace() and appendTrace() methods. (Alice)
+9/16 11:38       - Fixed logging spin/peek/pokes when the Device methods were not being called. (Alice)
