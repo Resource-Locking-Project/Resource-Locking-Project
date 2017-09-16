@@ -151,7 +151,10 @@ public class TestingDevice extends Device {
         boolean allTrue = true;
         boolean allFalse = true;
         for (int i = 0; i < size; i++) {
-            if (Math.random() > 0.5) { initialBits[i] = true; allFalse = false; }
+            if (Math.random() > 0.5) {
+                initialBits[i] = true;
+                allFalse = false;
+            }
             else allTrue = false;
 
             // ensure the last bit is different if all the rest are the same
@@ -160,7 +163,9 @@ public class TestingDevice extends Device {
                 else if (allTrue) initialBits[i] = false;
             }
         }
-        if (Math.random() > 0.5) rotatesPerSpinMultiplier = (int)(Math.random() * 10);
+        if (Math.random() > 0.5) {
+            rotatesPerSpinMultiplier = (int)(Math.random() * 10);
+        }
         this.bitsPerPeek = bitsPerPeek;
         setSpinner();
         createLinks(initialBits);

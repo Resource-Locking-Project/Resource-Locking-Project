@@ -104,7 +104,9 @@ public class FourBitTwoDisclosureDeviceUnlocker extends DeviceUnlocker {
                 n--;
             }
         }
-        if (isUnlocked) appendTrace("device is unlocked");
+        if (isUnlocked) {
+            appendTrace("device is unlocked");
+        }
         return isUnlocked;
     }
 
@@ -129,9 +131,8 @@ public class FourBitTwoDisclosureDeviceUnlocker extends DeviceUnlocker {
         boolean result = false;
         if (dev == null) {
             appendTrace("doSpin : Error, device is null");
-            return false;
-        }
-        if(isValidSpin(numOfSpins)) {
+            result = false;
+        } else if(isValidSpin(numOfSpins)) {
             for (int i = 0; i < numOfSpins; i++) {
                 appendTrace("spin : performing a spin");
                 result = dev.spin();
@@ -154,17 +155,12 @@ public class FourBitTwoDisclosureDeviceUnlocker extends DeviceUnlocker {
      */
     private static boolean doSpin() {
         boolean result;
-        if (state == STATE_NOT_CREATED) {
-            appendTrace("doSpin: Error, State is NOT_CREATED");
-            result = false;
-        }
-        else if (dev == null) {
-            appendTrace("doSpin: Error, device is null");
-            result = false;
-        } else {
-            appendTrace("spin : performing a spin");
+        if (isValidSpin(1)) {
             result = dev.spin();
-            state = STATE_SPUN;
+            appendTrace("spin : performing a spin");
+        }
+        else {
+           result = false;
         }
         return result;
     }
@@ -177,12 +173,15 @@ public class FourBitTwoDisclosureDeviceUnlocker extends DeviceUnlocker {
      */
     private static boolean isValidSpin(final int numOfSpins) {
         boolean continueSpin;
-
-        if(numOfSpins <= 0) {
-            appendTrace("Num of spins is negative, cannot spin a negative amount of times.");
+        if(dev == null) {
+            appendTrace("doSpin : device is null");
+            continueSpin = false;
+        }
+        else if(numOfSpins <= 0) {
+            appendTrace("doSpin : Num of spins is negative, cannot spin a negative amount of times.");
             continueSpin = false;
         } else if(state == STATE_NOT_CREATED) {
-            appendTrace("Invalid state for spin - no device is created");
+            appendTrace("doSpin : Invalid state for spin - no device is created");
             continueSpin = false;
         } else {
             continueSpin = true;
@@ -204,12 +203,7 @@ public class FourBitTwoDisclosureDeviceUnlocker extends DeviceUnlocker {
      */
     private static CharSequence doPeek(final CharSequence pattern) {
         CharSequence returnPattern;
-        boolean validPattern = isPeekValid(pattern);
-        if (dev == null) {
-            appendTrace("doPeek: error, device is null");
-            returnPattern = pattern;
-        }
-        else if(validPattern) {
+        if (isPeekValid(pattern)) {
             appendTrace("peek : with pattern", pattern);
             returnPattern = dev.peek(pattern);
             peekedPattern = returnPattern;
@@ -231,7 +225,9 @@ public class FourBitTwoDisclosureDeviceUnlocker extends DeviceUnlocker {
     private static boolean isPeekValid(CharSequence pattern) {
         boolean validLength = false;
         boolean validRequestPattern = false;
-        if(pattern != null) {
+        boolean deviceNotNull = false;
+        if(dev != null && pattern != null) {
+            deviceNotNull = true;
             int patternLength = pattern.length();
             validLength = patternLength == numOfBits;
 
@@ -246,7 +242,7 @@ public class FourBitTwoDisclosureDeviceUnlocker extends DeviceUnlocker {
             validRequestPattern = countOfRequestedBits == numOfBitsDisclosed;
         }
 
-        return validLength && validRequestPattern && state == STATE_SPUN;
+        return deviceNotNull && validLength && validRequestPattern && state == STATE_SPUN;
     }
 
     /**
@@ -368,7 +364,9 @@ public class FourBitTwoDisclosureDeviceUnlocker extends DeviceUnlocker {
     private static void appendTrace(String methodCallMessage, CharSequence deviceBits) {
         // Produce a message that looks like:
         //   [string...] (T - F -  ... - T - F)\n
-        if (deviceBits == null) deviceBits = "";
+        if (deviceBits == null) {
+            deviceBits = "";
+        }
         traceLog.append(methodCallMessage);
         traceLog.append(" (");
         for(int i = 0; i < deviceBits.length(); i++) {
