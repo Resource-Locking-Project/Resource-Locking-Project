@@ -132,8 +132,7 @@ public class FourBitTwoDisclosureDeviceUnlocker extends DeviceUnlocker {
         if (dev == null) {
             appendTrace("doSpin : Error, device is null");
             result = false;
-        }
-        else if(isValidSpin(numOfSpins)) {
+        } else if(isValidSpin(numOfSpins)) {
             for (int i = 0; i < numOfSpins; i++) {
                 appendTrace("spin : performing a spin");
                 result = dev.spin();
@@ -174,8 +173,11 @@ public class FourBitTwoDisclosureDeviceUnlocker extends DeviceUnlocker {
      */
     private static boolean isValidSpin(final int numOfSpins) {
         boolean continueSpin;
-
-        if(numOfSpins <= 0) {
+        if(dev == null) {
+            appendTrace("doSpin : device is null");
+            continueSpin = false;
+        }
+        else if(numOfSpins <= 0) {
             appendTrace("doSpin : Num of spins is negative, cannot spin a negative amount of times.");
             continueSpin = false;
         } else if(state == STATE_NOT_CREATED) {
@@ -201,8 +203,7 @@ public class FourBitTwoDisclosureDeviceUnlocker extends DeviceUnlocker {
      */
     private static CharSequence doPeek(final CharSequence pattern) {
         CharSequence returnPattern;
-        boolean validPattern = isPeekValid(pattern);
-        if(validPattern) {
+        if (isPeekValid(pattern)) {
             appendTrace("peek : with pattern", pattern);
             returnPattern = dev.peek(pattern);
             peekedPattern = returnPattern;
