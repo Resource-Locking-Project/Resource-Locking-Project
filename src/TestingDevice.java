@@ -209,6 +209,10 @@ public class TestingDevice extends Device {
      * Print out the bits of this device.
      */
     private void print() {
+        if (head == null) {
+            System.out.println("null");
+            return;
+        }
         Link current = head;
         System.out.print("[");
         do {
@@ -224,6 +228,9 @@ public class TestingDevice extends Device {
      * @return A string showign all bits in this device for testing.
      */
     private String superPeek() {
+        if (head == null) {
+            return "null";
+        }
         Link current = head;
         StringBuilder out = new StringBuilder("[");
         do {
@@ -255,6 +262,7 @@ public class TestingDevice extends Device {
      * @return true if all bits have identical value; false otherwise
      */
     public boolean spin() {
+        if (head == null) return false;
         state = STATE_SPUN;
         boolean all_true = true;
         boolean all_false = true;
@@ -295,6 +303,7 @@ public class TestingDevice extends Device {
      */
     public CharSequence peek(CharSequence pattern) {
         if (state != STATE_SPUN) return null;
+        if (pattern == null) return "";
         state = STATE_PEEKED;
         if (pattern.length() != size) throw new IllegalArgumentException("pattern must be exactly " + size + " characters long");
         requestedPositions = new ArrayList<Integer>();
@@ -322,6 +331,8 @@ public class TestingDevice extends Device {
 
     public void poke(CharSequence pattern) {
         if (state != STATE_PEEKED) return;
+        if (pattern == null) return;
+        if (head == null) return;
         state = STATE_POKED;
         if (pattern.length() != size) throw new IllegalArgumentException("pattern must be exactly " + size + " characters long");
         StringBuilder q = new StringBuilder(pattern);

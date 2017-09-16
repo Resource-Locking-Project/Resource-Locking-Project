@@ -43,10 +43,10 @@ public class FourBitTwoDisclosureDeviceUnlockerTest {
         FourBitTwoDisclosureDeviceUnlocker.unlock(dev);
         // split by new line character
         String[] split = FourBitTwoDisclosureDeviceUnlocker.showTrace().split("\n");
-
         int spins, pokes, peeks;
         spins = pokes = peeks = 0;
         for (String atom : split) {
+            System.out.println(atom);
             if (atom.startsWith("spin")) spins++;
             else if (atom.startsWith("poke")) pokes++;
             else if (atom.startsWith("peek")) peeks++;

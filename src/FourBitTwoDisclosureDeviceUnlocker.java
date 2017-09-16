@@ -73,6 +73,7 @@ public class FourBitTwoDisclosureDeviceUnlocker extends DeviceUnlocker {
         else {
             state = STATE_CREATED;
         }
+        clearTrace();
         FourBitTwoDisclosureDeviceUnlocker.dev = dev;
         boolean isUnlocked = doSpin();
         List<CharSequence> perms = getPermutations();
@@ -103,6 +104,7 @@ public class FourBitTwoDisclosureDeviceUnlocker extends DeviceUnlocker {
                 n--;
             }
         }
+        if (isUnlocked) appendTrace("device is unlocked");
         return isUnlocked;
     }
 
@@ -125,7 +127,10 @@ public class FourBitTwoDisclosureDeviceUnlocker extends DeviceUnlocker {
      */
     private static boolean doSpin(final int numOfSpins) {
         boolean result = false;
-
+        if (dev == null) {
+            appendTrace("doSpin : Error, device is null");
+            return false;
+        }
         if(isValidSpin(numOfSpins)) {
             for (int i = 0; i < numOfSpins; i++) {
                 appendTrace("spin : performing a spin");
@@ -150,13 +155,18 @@ public class FourBitTwoDisclosureDeviceUnlocker extends DeviceUnlocker {
     private static boolean doSpin() {
         boolean result;
         if (state == STATE_NOT_CREATED) {
-            appendTrace("Spin not valid: State is NOT_CREATED");
+            appendTrace("doSpin: Error, State is NOT_CREATED");
             result = false;
         }
-        else {
+        else if (dev == null) {
+            appendTrace("doSpin: Error, device is null");
+            result = false;
+        } else {
+            appendTrace("spin : performing a spin");
             result = dev.spin();
+            state = STATE_SPUN;
         }
-        return  result;
+        return result;
     }
 
     /**
@@ -195,8 +205,11 @@ public class FourBitTwoDisclosureDeviceUnlocker extends DeviceUnlocker {
     private static CharSequence doPeek(final CharSequence pattern) {
         CharSequence returnPattern;
         boolean validPattern = isPeekValid(pattern);
-
-        if(validPattern) {
+        if (dev == null) {
+            appendTrace("doPeek: error, device is null");
+            returnPattern = pattern;
+        }
+        else if(validPattern) {
             appendTrace("peek : with pattern", pattern);
             returnPattern = dev.peek(pattern);
             peekedPattern = returnPattern;
@@ -297,12 +310,6 @@ public class FourBitTwoDisclosureDeviceUnlocker extends DeviceUnlocker {
         }
         return newPattern.toString();
     }
-
-    private static List<CharSequence> getPermutations()
-    {
-        return null;
-    }
-
     /**
      * Get a list of possible permutations for a valid doPeek
      * @return list of CharSequences that can be used for a valid doPeek
@@ -338,6 +345,12 @@ public class FourBitTwoDisclosureDeviceUnlocker extends DeviceUnlocker {
         permutation(index + 1, used, accumulator, perms);
     }
     /**
+     * Clears trace log.
+     */
+    private static void clearTrace() {
+        traceLog = new StringBuilder();
+    }
+    /**
      * Appends a specified message to the trace log in DeviceUnlocker
      * @param message the message to be appended.
      */
@@ -355,12 +368,10 @@ public class FourBitTwoDisclosureDeviceUnlocker extends DeviceUnlocker {
     private static void appendTrace(String methodCallMessage, CharSequence deviceBits) {
         // Produce a message that looks like:
         //   [string...] (T - F -  ... - T - F)\n
+        if (deviceBits == null) deviceBits = "";
         traceLog.append(methodCallMessage);
         traceLog.append(" (");
         for(int i = 0; i < deviceBits.length(); i++) {
-            if (i > 0) {
-                traceLog.append(" - ");
-            }
             traceLog.append(deviceBits.charAt(i));
         }
         traceLog.append(")\n");
