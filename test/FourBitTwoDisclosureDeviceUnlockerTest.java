@@ -1,12 +1,16 @@
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.List;
 
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.*;
 
+@SuppressWarnings("ALL")
 public class FourBitTwoDisclosureDeviceUnlockerTest {
     @Test
     public void nullDeviceTest() {
@@ -14,11 +18,28 @@ public class FourBitTwoDisclosureDeviceUnlockerTest {
     }
 
     @Test
+    public void getPermutationsTest() {
+        try {
+            Method permsMethod = FourBitTwoDisclosureDeviceUnlocker.class.getDeclaredMethod("getPermutations");
+            permsMethod.setAccessible(true);
+            List<CharSequence> perms = (List<CharSequence>)permsMethod.invoke(FourBitTwoDisclosureDeviceUnlocker.class);
+            Assert.assertTrue(perms.contains("??--"));
+            Assert.assertTrue(perms.contains("?-?-"));
+            Assert.assertTrue(perms.contains("?--?"));
+            Assert.assertTrue(perms.contains("-??-"));
+            Assert.assertTrue(perms.contains("-?-?"));
+            Assert.assertTrue(perms.contains("--??"));
+        } catch(Exception e) {
+            e.printStackTrace();
+            fail();
+        }
+    }
+    @Test
     /*
      * Ensures that the trace is showing accurate information.
      */
     public void traceTest() {
-        Device dev = spy(Device.class);
+        TestingDevice dev = spy(TestingDevice.class);
         FourBitTwoDisclosureDeviceUnlocker.unlock(dev);
         // split by new line character
         String[] split = FourBitTwoDisclosureDeviceUnlocker.showTrace().split("\n");
@@ -44,7 +65,7 @@ public class FourBitTwoDisclosureDeviceUnlockerTest {
      */
     public void heuristicHaltingTestForUnlock() {
         for (int i = 0; i < 10; i++) {
-            Device dev = new Device();
+            TestingDevice dev = new TestingDevice();
             FourBitTwoDisclosureDeviceUnlocker.unlock(dev);
         }
     }
@@ -53,23 +74,47 @@ public class FourBitTwoDisclosureDeviceUnlockerTest {
      * This should test for 99% efficiency in unlocking all 3 kinds of devices: linear, polynomial, and random rotations.
      */
     public void efficiencyTestForUnlock() {
-        int successes = 0;
-        for (int i = 0; i < 1000; i++) {
-            Device dev = null;
-            if (i % 3 == 0) dev = new Device();
-            else if (i % 3 == 1) dev = new Device(true);
-            else if (i % 3 == 2) dev = new Device(false, (int)(Math.random() * 4), (int)(Math.random() * 10));
-            if (FourBitTwoDisclosureDeviceUnlocker.unlock(dev)) successes++;
-            else System.out.println(dev + ": " + dev.superPeek());
+        Constructor empty = null;
+        Constructor random = null;
+        Constructor polynomial = null;
+        try {
+            empty = TestingDevice.class.getDeclaredConstructor();
+            empty.setAccessible(true);
+            random = TestingDevice.class.getDeclaredConstructor(Boolean.TYPE);
+            random.setAccessible(true);
+            polynomial = TestingDevice.class.getDeclaredConstructor(Boolean.TYPE,Integer.TYPE, Integer.TYPE);
+            polynomial.setAccessible(true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail();
         }
-        System.out.println(successes);
-        assert(successes > 1000 * 0.99);
+        try {
+            final int TOTAL_TESTED = 1000;
+            int successes = 0;
+            for (int i = 0; i < TOTAL_TESTED; i++) {
+                TestingDevice dev = null;
+                if (i % 3 == 0) dev = (TestingDevice)empty.newInstance();
+                else if (i % 3 == 1) dev = (TestingDevice)random.newInstance(true);
+                else if (i % 3 == 2) dev = (TestingDevice)polynomial.newInstance(false, (int) (Math.random() * 4), (int) (Math.random() * 10));
+                Method superPeek = dev.getClass().getDeclaredMethod("superPeek");
+                superPeek.setAccessible(true);
+                if (FourBitTwoDisclosureDeviceUnlocker.unlock(dev)) successes++;
+                else {
+                    System.out.println(dev + ": " + (boolean)superPeek.invoke(dev) + "\n" + FourBitTwoDisclosureDeviceUnlocker.showTrace());
+                }
+            }
+            System.out.println(successes + " successes out of " + TOTAL_TESTED);
+            assert (successes > 1000 * 0.99);
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail();
+        }
     }
 
 
     @Test
     public void testDoSpinInvalidCall() throws NoSuchMethodException, NoSuchFieldException, IllegalAccessException, InvocationTargetException {
-        Device device = new Device();
+        TestingDevice device = new TestingDevice();
         int stateCreated = 1;
 
         Method doSpin = FourBitTwoDisclosureDeviceUnlocker.class.getDeclaredMethod("doSpin", int.class);
@@ -96,12 +141,14 @@ public class FourBitTwoDisclosureDeviceUnlockerTest {
         result = (boolean) doSpin.invoke(FourBitTwoDisclosureDeviceUnlocker.class, -1);
         Assert.assertFalse(result);
         Assert.assertTrue(stateCreated == state);
+
+
     }
 
 
     @Test
     public void testDoSpinValidCalls() throws NoSuchMethodException, NoSuchFieldException, IllegalAccessException, InvocationTargetException {
-        Device device = new Device();
+        TestingDevice device = new TestingDevice();
         int stateSpun= 2;
         int created = 1;
         int statePoked = 4;
@@ -130,7 +177,7 @@ public class FourBitTwoDisclosureDeviceUnlockerTest {
         Assert.assertFalse(result);
 
         boolean[] bits = {true, true, true, true};
-        device = new Device(bits, 2);
+        device = new TestingDevice(bits, 2);
         devField.set(FourBitTwoDisclosureDeviceUnlocker.class, device);
         stateField.set(FourBitTwoDisclosureDeviceUnlocker.class, created);
         result = (boolean) doSpin.invoke(FourBitTwoDisclosureDeviceUnlocker.class, 5);
@@ -155,12 +202,18 @@ public class FourBitTwoDisclosureDeviceUnlockerTest {
         state = (int) stateField.get(FourBitTwoDisclosureDeviceUnlocker.class);
         Assert.assertTrue(state == stateSpun);
         Assert.assertTrue(result);
+
+
+
+        // reset to default values
+        stateField.set(FourBitTwoDisclosureDeviceUnlocker.class,0);
+        devField.set(FourBitTwoDisclosureDeviceUnlocker.class,null);
     }
 
 
     @Test
     public void testInvalidPeekedPatternCall() throws Exception {
-        Device device = new Device();
+        TestingDevice device = new TestingDevice();
         int created = 1;
         int statePeeked = 3;
         int statePoked = 4;
@@ -346,6 +399,10 @@ public class FourBitTwoDisclosureDeviceUnlockerTest {
         Assert.assertTrue(requestPattern.equals(pattern));
         Assert.assertTrue(pattern.length() == requestPattern.length());
         Assert.assertTrue(state == statePoked);
+
+        // reset to default values
+        stateField.set(FourBitTwoDisclosureDeviceUnlocker.class,0);
+        devField.set(FourBitTwoDisclosureDeviceUnlocker.class,null);
     }
 
 
@@ -353,7 +410,7 @@ public class FourBitTwoDisclosureDeviceUnlockerTest {
     public void testValidDoPeekCalls()  throws Exception {
         int stateCreated = 1;
         int statePeeked = 3;
-        Device device = new Device();
+        TestingDevice device = new TestingDevice();
 
         Field devField = FourBitTwoDisclosureDeviceUnlocker.class.getDeclaredField("dev");
         devField.setAccessible(true);
@@ -440,6 +497,11 @@ public class FourBitTwoDisclosureDeviceUnlockerTest {
         Assert.assertTrue(returnPattern.charAt(0) == '-');
         Assert.assertTrue(returnPattern.charAt(1) == '-');
         Assert.assertTrue(state == statePeeked);
+
+        // reset to default values
+        stateField.set(FourBitTwoDisclosureDeviceUnlocker.class,0);
+        devField.set(FourBitTwoDisclosureDeviceUnlocker.class,null);
+
     }
 
     @Test
@@ -449,7 +511,7 @@ public class FourBitTwoDisclosureDeviceUnlockerTest {
         int stateSpun = 2;
         int statePeeked = 3;
         int statePoked = 4;
-        Device device = new Device();
+        TestingDevice device = new TestingDevice();
 
         Field devField = FourBitTwoDisclosureDeviceUnlocker.class.getDeclaredField("dev");
         devField.setAccessible(true);
@@ -504,6 +566,11 @@ public class FourBitTwoDisclosureDeviceUnlockerTest {
         doPoke.invoke(FourBitTwoDisclosureDeviceUnlocker.class);
         state = (int) stateField.get(FourBitTwoDisclosureDeviceUnlocker.class);
         Assert.assertTrue(state == statePeeked);
+
+        // reset to default values
+        stateField.set(FourBitTwoDisclosureDeviceUnlocker.class,0);
+        devField.set(FourBitTwoDisclosureDeviceUnlocker.class,null);
+        changeBitToField.set(FourBitTwoDisclosureDeviceUnlocker.class,'T');
     }
 
     @Test
@@ -511,7 +578,7 @@ public class FourBitTwoDisclosureDeviceUnlockerTest {
         int statePeeked = 3;
         int statePoked = 4;
         String requestPattern = "?--?";
-        Device device = new Device();
+        TestingDevice device = new TestingDevice();
 
         Field devField = FourBitTwoDisclosureDeviceUnlocker.class.getDeclaredField("dev");
         devField.setAccessible(true);
@@ -525,8 +592,6 @@ public class FourBitTwoDisclosureDeviceUnlockerTest {
         peekedPatternField.setAccessible(true);
         peekedPatternField.set(FourBitTwoDisclosureDeviceUnlocker.class, requestPattern);
 
-        Field changeBitToField = FourBitTwoDisclosureDeviceUnlocker.class.getDeclaredField("changeBitTo");
-        changeBitToField.setAccessible(true);
 
         Method doPoke = FourBitTwoDisclosureDeviceUnlocker.class.getDeclaredMethod("doPoke");
         doPoke.setAccessible(true);
@@ -541,5 +606,9 @@ public class FourBitTwoDisclosureDeviceUnlockerTest {
         doPoke.invoke(FourBitTwoDisclosureDeviceUnlocker.class);
         state = (int) stateField.get(FourBitTwoDisclosureDeviceUnlocker.class);
         Assert.assertTrue(state == statePoked);
+
+        // reset to default values
+        devField.set(FourBitTwoDisclosureDeviceUnlocker.class,null);
+        stateField.set(FourBitTwoDisclosureDeviceUnlocker.class,0);
     }
 }

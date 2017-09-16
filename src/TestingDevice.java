@@ -1,7 +1,24 @@
 import java.util.ArrayList;
 import java.util.List;
 
-public class Device {
+/**
+ * An implementation of the <a href="http://jodypaul.com/cs/sweprin/deviceProj/api/Device.html">Device</a> class used for testing. Allows for linear, polynomial, and pseudo-random rotations per Spin call.
+ * <p>
+ *     Private constructors allow creation of Devices that always spin a number of times in a linear, polynomial, or pseudo-random relationship.
+ *     <br>
+ *     This is helpful for testing by artificially increasing the chances of disclosed bits to 'follow' a linear or polynomial algorithm, potentially hiding one of them, and making it more difficult to unlock.
+ *     <br>
+ *     <br>
+ *     For example, if we always try to poke the first two bits of a device after a spin, and the spin always rotates 4 times in a device holding 4 circular bits, it will always ask for the same 2 bits.
+ *     <br>
+ *     In the same way, if we ask for every 2 bits in a linear relationship, the Device could be rotating in such a way with each spin that it follows our requested peek sequence, potentially preventing a successful unlocking of the device.
+ * </p>
+ * @author Daniel Dews
+ * @version 1.5
+ * @see <a href="http://jodypaul.com/cs/sweprin/deviceProj/api/Device.html">Device</a>
+ * @see <a href="http://jodypaul.com/cs/sweprin/deviceProj/projectDescription.html">Project Description</a>
+ */
+public class TestingDevice extends Device {
     private Link<Character> head;
     /**
      * A list of requested positions from the last peek method
@@ -50,7 +67,7 @@ public class Device {
     /**
      *  The number of bits we can peek
      */
-    public int bitsPerPeek;
+    private int bitsPerPeek;
     /**
      * The number of spins that have been done
      */
@@ -58,7 +75,7 @@ public class Device {
     /**
      * The number of bits stored
      */
-    public int size;
+    private int size;
     /**
      * The current state of the device.
      */
@@ -75,7 +92,7 @@ public class Device {
      * @param numRotatesPerSpin number of times to rotate per spin
      * @param rotatesPerSpinMultiplier a multiple we add to the numRotatesPerSpin each time spin is called to emulate polynomial rotations
      */
-    public Device(boolean[] initialBits, int bitsPerPeek,  int numRotatesPerSpin, int rotatesPerSpinMultiplier) {
+    private TestingDevice(boolean[] initialBits, int bitsPerPeek, int numRotatesPerSpin, int rotatesPerSpinMultiplier) {
         this(initialBits, bitsPerPeek);
         this.numRotatesPerSpin = numRotatesPerSpin;
         this.rotatesPerSpinMultiplier = rotatesPerSpinMultiplier;
@@ -87,7 +104,7 @@ public class Device {
      * @param numRotatesPerSpin number of times to rotate per spin
      * @param rotatesPerSpinMultiplier a multiple we add to the numRotatesPerSpin each time spin is called to emulate polynomial rotations
      */
-    public Device(boolean isRandom, int numRotatesPerSpin, int rotatesPerSpinMultiplier) {
+    private TestingDevice(boolean isRandom, int numRotatesPerSpin, int rotatesPerSpinMultiplier) {
         this();
         this.random = isRandom;
         this.numRotatesPerSpin = numRotatesPerSpin;
@@ -98,7 +115,7 @@ public class Device {
      * @param initialBits the bit values for this test device
      * @param bitsPerPeek the number of bits to disclose via peek or set via poke
      */
-    public Device(boolean[] initialBits, int bitsPerPeek) {
+    public TestingDevice(boolean[] initialBits, int bitsPerPeek) {
         createLinks(initialBits);
         this.bitsPerPeek = bitsPerPeek;
         this.size = initialBits.length;
@@ -110,7 +127,7 @@ public class Device {
      * @param bitsPerPeek the number of bits to disclose via peek or set via poke
      * @param isRandom whether or not this device uses pseudo-random rotations per spin
      */
-    public Device(boolean[] initialBits, int bitsPerPeek, boolean isRandom) {
+    private TestingDevice(boolean[] initialBits, int bitsPerPeek, boolean isRandom) {
         this(initialBits,bitsPerPeek);
         this.random = isRandom;
     }
@@ -119,7 +136,7 @@ public class Device {
      * Create a device with a choice of pseudo randomness
      * @param isRandom whether or not to use pseudo-random rotations per spin
      */
-    public Device(boolean isRandom) {
+    private TestingDevice(boolean isRandom) {
         this();
         this.random = isRandom;
     }
@@ -128,11 +145,20 @@ public class Device {
      * @param size the number of bits stored in this device
      * @param bitsPerPeek the number of bits to disclose via peek or set via poke
      */
-    public Device(int size, int bitsPerPeek) {
+    public TestingDevice(int size, int bitsPerPeek) {
         this.size = size;
         boolean[] initialBits = new boolean[this.size];
+        boolean allTrue = true;
+        boolean allFalse = true;
         for (int i = 0; i < size; i++) {
-            if (Math.random() > 0.5) initialBits[i] = true;
+            if (Math.random() > 0.5) { initialBits[i] = true; allFalse = false; }
+            else allTrue = false;
+
+            // ensure the last bit is different if all the rest are the same
+            if (i == size - 1) {
+                if (allFalse) initialBits[i] = true;
+                else if (allTrue) initialBits[i] = false;
+            }
         }
         if (Math.random() > 0.5) rotatesPerSpinMultiplier = (int)(Math.random() * 10);
         this.bitsPerPeek = bitsPerPeek;
@@ -143,14 +169,14 @@ public class Device {
     /**
      * Construct device using defaults.
      */
-    public Device() {
+    public TestingDevice() {
         this(DEFAULT_SIZE,DEFAULT_PEEKS);
         setSpinner();
     }
 
     /**
      * Create the linked list to store the bits used in the locking of this device.
-     * @param initialBits
+     * @param initialBits boolean array representing bits being on or off
      */
     private void createLinks(boolean[] initialBits) {
         setSpinner();
@@ -161,7 +187,7 @@ public class Device {
         Link last = first;
         for (int i = 1; i < initialBits.length; i++) {
             boolean bit = initialBits[i];
-            Link<Character> link = null;
+            Link<Character> link;
             if (bit) link = new Link<Character>(VALUE_TRUE);
             else link = new Link<Character>(VALUE_FALSE);
             last.add(link);
@@ -197,7 +223,7 @@ public class Device {
      * A string representing the bits in this device
      * @return A string showign all bits in this device for testing.
      */
-    protected String superPeek() {
+    private String superPeek() {
         Link current = head;
         StringBuilder out = new StringBuilder("[");
         do {

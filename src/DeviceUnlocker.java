@@ -3,7 +3,7 @@
  *
  * @author Dr. Jody Paul
  * @version 1.1.5
- * @see Device
+ * @see TestingDevice
  * @see <a href="../projectDescription.html">Project Description</a>
  */
 public abstract class DeviceUnlocker {
