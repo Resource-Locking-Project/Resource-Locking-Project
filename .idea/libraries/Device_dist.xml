@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="Device-dist">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/src/resources/Device-dist.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
