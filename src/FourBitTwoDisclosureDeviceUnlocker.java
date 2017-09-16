@@ -46,6 +46,9 @@ public class FourBitTwoDisclosureDeviceUnlocker extends DeviceUnlocker {
     /** Number of bits that are disclosed*/
     private static final int numOfBitsDisclosed = 2;
 
+    /** Log of all SPIN/PEEK/POKE actions performed. */
+    private static StringBuilder traceLog = new StringBuilder();
+
     /**
      * Unlocks a device-controlled resource.
      * This method must be guaranteed to halt, regardless of
@@ -77,6 +80,14 @@ public class FourBitTwoDisclosureDeviceUnlocker extends DeviceUnlocker {
     }
 
     /**
+     * Retrieve trace of previous unlock process.
+     * @return rendering of steps in the unlock process
+     */
+    public static String showTrace() {
+      return traceLog.toString();
+    }
+
+    /**
      * Request's the device to spin the bits in a circular pattern. Pattern spins to the right.
      * Valid spin command:
      *  1) Can be called after device creation, after doPoke, after doPeek, after doSpin.
@@ -90,7 +101,7 @@ public class FourBitTwoDisclosureDeviceUnlocker extends DeviceUnlocker {
 
         if(isValidSpin(numOfSpins)) {
             for (int i = 0; i < numOfSpins; i++) {
-                appendTrace("doSpin");
+                appendTrace("spin : performing a spin");
                 result = dev.spin();
 
                 if (result) {
@@ -98,6 +109,8 @@ public class FourBitTwoDisclosureDeviceUnlocker extends DeviceUnlocker {
                 }
             }
             state = STATE_SPUN;
+        } else {
+          appendTrace("doSpin : Spin is not valid");
         }
 
         return result;
@@ -111,8 +124,9 @@ public class FourBitTwoDisclosureDeviceUnlocker extends DeviceUnlocker {
         boolean result;
         if(state != STATE_NOT_CREATED) {
             result = dev.spin();
+            appendTrace("spin : performing a spin");
         } else {
-            appendTrace("Spin not valid: State is NOT_CREATED");
+            appendTrace("doSpin : Spin not valid: State is NOT_CREATED");
             result = false;
         }
         return  result;
@@ -156,13 +170,13 @@ public class FourBitTwoDisclosureDeviceUnlocker extends DeviceUnlocker {
         boolean validPattern = isPeekValid(pattern);
 
         if(validPattern) {
-            appendTrace("doPeek with pattern", pattern);
+            appendTrace("peek : with pattern", pattern);
             returnPattern = dev.peek(pattern);
             peekedPattern = returnPattern;
             appendTrace("return peekedPattern", returnPattern);
             state = STATE_PEEKED;
         } else {
-            appendTrace("doPeek: invalid doPeek call with bits", pattern);
+            appendTrace("doPeek : invalid doPeek call with bits", pattern);
             returnPattern = pattern;
         }
 
@@ -203,7 +217,7 @@ public class FourBitTwoDisclosureDeviceUnlocker extends DeviceUnlocker {
     private static void doPoke() {
         if(isValidPoke()) {
             CharSequence patternToPoke = getPokedPattern();
-            appendTrace("Poking with pattern:", patternToPoke);
+            appendTrace("poke : Poking with pattern:", patternToPoke);
             dev.poke(patternToPoke);
             state = STATE_POKED;
         }
@@ -213,13 +227,13 @@ public class FourBitTwoDisclosureDeviceUnlocker extends DeviceUnlocker {
         boolean isValid;
         String validBits = "TF";
         if(state != STATE_PEEKED){
-            appendTrace("Poke is not valid, current state does not equal STATE_PEEKED");
+            appendTrace("isValidPoke : Poke is not valid, current state does not equal STATE_PEEKED");
             isValid = false;
         } else if(!validBits.contains(String.valueOf(changeBitTo))) {
-            appendTrace("Bit to change to is invalid: ", String.valueOf(changeBitTo));
+            appendTrace("isValidPoke : Bit to change to is invalid: ", String.valueOf(changeBitTo));
             isValid = false;
         } else if(peekedPattern == null) {
-            appendTrace("Peeked Pattern is null and cannot determine poke pattern", peekedPattern);
+            appendTrace("isValidPoke : Peeked Pattern is null and cannot determine poke pattern", peekedPattern);
             isValid = false;
         } else {
             isValid = true;
@@ -242,14 +256,19 @@ public class FourBitTwoDisclosureDeviceUnlocker extends DeviceUnlocker {
         return newPattern.toString();
     }
 
+    private static List<CharSequence> getPermutations()
+    {
+        return null;
+    }
+
     /**
      * Appends a specified message to the trace log in DeviceUnlocker
      * @param message the message to be appended.
      */
     private static void appendTrace(final String message) {
-
+        traceLog.append(message);
+        traceLog.append("\n");
     }
-
 
     /**
      * Appends a specified message to trace log in DeviceUnlocker, but allowing bits to be formatted
@@ -258,6 +277,16 @@ public class FourBitTwoDisclosureDeviceUnlocker extends DeviceUnlocker {
      * @param deviceBits the bits in the device returned.
      */
     private static void appendTrace(String methodCallMessage, CharSequence deviceBits) {
-
+        // Produce a message that looks like:
+        //   [string...] (T - F -  ... - T - F)\n
+        traceLog.append(methodCallMessage);
+        traceLog.append(" (");
+        for(int i = 0; i < deviceBits.length(); i++) {
+            if (i > 0) {
+                traceLog.append(" - ");
+            }
+            traceLog.append(deviceBits.charAt(i));
+        }
+        traceLog.append(")\n");
     }
 }
