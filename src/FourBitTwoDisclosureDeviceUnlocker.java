@@ -73,8 +73,8 @@ public class FourBitTwoDisclosureDeviceUnlocker extends DeviceUnlocker {
         FourBitTwoDisclosureDeviceUnlocker.dev = dev;
         boolean isUnlocked = doSpin();
         List<CharSequence> perms = getPermutations();
-        int n = NUM_OF_BITS;
-        while ((!isUnlocked) && (n > 0)) {
+        int n = 1;
+        while ((!isUnlocked) && (n <= NUM_OF_BITS)) {
             for (CharSequence perm : perms) {
                 doPeek(perm);
                 doPoke();
@@ -83,7 +83,7 @@ public class FourBitTwoDisclosureDeviceUnlocker extends DeviceUnlocker {
                     break;
                 }
             }
-            n--;
+            n++;
         }
         if (!isUnlocked) {
             n = NUM_OF_BITS;
