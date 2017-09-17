@@ -77,7 +77,9 @@ public class FourBitTwoDisclosureDeviceUnlocker extends DeviceUnlocker {
         while ((!isUnlocked) && (n <= NUM_OF_BITS)) {
             for (CharSequence perm : perms) {
                 doPeek(perm);
-                doPoke();
+                if (!peekedPattern.equals(perm.toString().replace("?", String.valueOf(changeBitTo)))) {
+                    doPoke();
+                }
                 isUnlocked = doSpin(n);
                 if (isUnlocked) {
                     break;
@@ -113,7 +115,7 @@ public class FourBitTwoDisclosureDeviceUnlocker extends DeviceUnlocker {
      * @return rendering of steps in the unlock process
      */
     public static String showTrace() {
-      return traceLog.toString();
+        return traceLog.toString();
     }
 
     /**
@@ -138,7 +140,7 @@ public class FourBitTwoDisclosureDeviceUnlocker extends DeviceUnlocker {
             }
             state = STATE_SPUN;
         } else {
-          appendTrace("doSpin : Spin is not valid");
+            appendTrace("doSpin : Spin is not valid");
         }
 
         return result;
@@ -155,7 +157,7 @@ public class FourBitTwoDisclosureDeviceUnlocker extends DeviceUnlocker {
             appendTrace("spin : performing a spin");
             state = STATE_SPUN;
         } else {
-           result = false;
+            result = false;
         }
         return result;
     }
