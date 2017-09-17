@@ -9,75 +9,71 @@ import java.util.List;
  * @author Alice Rowan
  * @author Maxwell Stark
  * @version 4.1.4.1
- * @see <a href="http://jodypaul.com/cs/sweprin/deviceProj/projectDescription.html">Project Description</a>
+ * @see <a href="../projectDescription.html">Project Description</a>
  */
 public class FourBitTwoDisclosureDeviceUnlocker extends DeviceUnlocker {
 
 
-    /**char representing true in device**/
+    /**char representing true in device.**/
     private static final char TRUE = 'T';
 
-    /**char representing false in device**/
+    /**char representing false in device.**/
     private static final char FALSE = 'F';
 
-    /**State before device is created, spun, poked, or peeked */
+    /**State before device is created, spun, poked, or peeked. */
     private static final int STATE_NOT_CREATED = 0;
 
-    /**State after device is created */
+    /**State after device is created. */
     private static final int STATE_CREATED = 1;
 
     /**State after device is spun.*/
     private static final int STATE_SPUN = 2;
 
-    /**State after device is peeked */
+    /**State after device is peeked. */
     private static final int STATE_PEEKED = 3;
 
-    /**State after device is poked */
+    /**State after device is poked. */
     private static final int STATE_POKED = 4;
 
     /**Holds the state of the unlock.*/
     private static int state = STATE_NOT_CREATED;
 
     /**
-     * Static device to unlock
+     * Static device to unlock.
      */
     private static Device dev;
 
     /** Pattern requested from doPeek. */
     private static CharSequence peekedPattern = null;
 
-    /** Char we are changing device bits to default to 'T'*/
+    /** Char we are changing device bits to default to 'T'.*/
     private static char changeBitTo = TRUE;
 
-    /** Number of Bits for Device */
-    private static final int numOfBits = 4;
+    /** Number of Bits for Device. */
+    private static final int NUM_OF_BITS = 4;
 
-    /** Number of bits that are disclosed*/
-    private static final int numOfBitsDisclosed = 2;
+    /** Number of bits that are disclosed.*/
+    private static final int NUM_OF_BITS_DISCLOSED = 2;
 
     /** Log of all SPIN/PEEK/POKE actions performed. */
     private static StringBuilder traceLog = new StringBuilder();
 
     /**
-     * Unlocks a device-controlled resource.
-     * This method must be guaranteed to halt, regardless of
-     * whether or not it successfully unlocked the resource.
-     * @param dev the device controlling the resource to unlock
-     * @return true if the resource is unlocked (all bits in the
-     *         device are now identical); false otherwise
+     * Unlocks a resource controlled by a 4-bit/2-disclosed device. Behavior is unspecified if parameter is not a reference to a valid 4-bit/2-disclosure device.
+     * @param dev the device controlling the resource to unlock; must be a 4-bit device with 2 peek/poke bits.
+     * @return true if the resource is unlocked (all bits in the device are now identical); false otherwise
      */
     public static boolean unlock(final Device dev) {
         if (dev == null) {
             return false;
-        }
-        else {
+        } else {
             state = STATE_CREATED;
         }
         clearTrace();
         FourBitTwoDisclosureDeviceUnlocker.dev = dev;
         boolean isUnlocked = doSpin();
         List<CharSequence> perms = getPermutations();
-        int n = numOfBits;
+        int n = NUM_OF_BITS;
         while ((!isUnlocked) && (n > 0)) {
             for (CharSequence perm : perms) {
                 doPeek(perm);
@@ -90,13 +86,15 @@ public class FourBitTwoDisclosureDeviceUnlocker extends DeviceUnlocker {
             n--;
         }
         if (!isUnlocked) {
-            n = numOfBits;
+            n = NUM_OF_BITS;
             while (n > 0) {
                 for (CharSequence perm : perms) {
                     doPeek(perm);
                     doPoke();
-                    // we want a random number of spins from 1 to the number of bits. 0 spins is invalid doSpin()
-                    isUnlocked = doSpin((int)Math.round(Math.random() * numOfBits) + 1);
+                    // we want a random number of spins
+                    // from 1 to the number of bits.
+                    // 0 spins is invalid doSpin()
+                    isUnlocked = doSpin((int) Math.round(Math.random() * NUM_OF_BITS) + 1);
                     if (isUnlocked) {
                         break;
                     }
@@ -129,10 +127,7 @@ public class FourBitTwoDisclosureDeviceUnlocker extends DeviceUnlocker {
      */
     private static boolean doSpin(final int numOfSpins) {
         boolean result = false;
-        if (dev == null) {
-            appendTrace("doSpin : Error, device is null");
-            result = false;
-        } else if(isValidSpin(numOfSpins)) {
+        if (isValidSpin(numOfSpins)) {
             for (int i = 0; i < numOfSpins; i++) {
                 appendTrace("spin : performing a spin");
                 result = dev.spin();
@@ -158,8 +153,8 @@ public class FourBitTwoDisclosureDeviceUnlocker extends DeviceUnlocker {
         if (isValidSpin(1)) {
             result = dev.spin();
             appendTrace("spin : performing a spin");
-        }
-        else {
+            state = STATE_SPUN;
+        } else {
            result = false;
         }
         return result;
@@ -173,14 +168,13 @@ public class FourBitTwoDisclosureDeviceUnlocker extends DeviceUnlocker {
      */
     private static boolean isValidSpin(final int numOfSpins) {
         boolean continueSpin;
-        if(dev == null) {
+        if (dev == null) {
             appendTrace("doSpin : device is null");
             continueSpin = false;
-        }
-        else if(numOfSpins <= 0) {
+        } else if (numOfSpins <= 0) {
             appendTrace("doSpin : Num of spins is negative, cannot spin a negative amount of times.");
             continueSpin = false;
-        } else if(state == STATE_NOT_CREATED) {
+        } else if (state == STATE_NOT_CREATED) {
             appendTrace("doSpin : Invalid state for spin - no device is created");
             continueSpin = false;
         } else {
@@ -218,28 +212,28 @@ public class FourBitTwoDisclosureDeviceUnlocker extends DeviceUnlocker {
     }
 
     /**
-     * Returns whether or not pattern is valid
+     * Returns whether or not pattern is valid.
      * @param pattern to validate
      * @return boolean value representing if pattern is valid
      */
-    private static boolean isPeekValid(CharSequence pattern) {
+    private static boolean isPeekValid(final CharSequence pattern) {
         boolean validLength = false;
         boolean validRequestPattern = false;
         boolean deviceNotNull = false;
-        if(dev != null && pattern != null) {
+        if (dev != null && pattern != null) {
             deviceNotNull = true;
             int patternLength = pattern.length();
-            validLength = patternLength == numOfBits;
+            validLength = patternLength == NUM_OF_BITS;
 
             int countOfRequestedBits = 0;
-            for(int i = 0; i < patternLength; i++) {
+            for (int i = 0; i < patternLength; i++) {
                 char bit = pattern.charAt(i);
-                if(bit == '?') {
+                if (bit == '?') {
                     countOfRequestedBits++;
                 }
             }
 
-            validRequestPattern = countOfRequestedBits == numOfBitsDisclosed;
+            validRequestPattern = countOfRequestedBits == NUM_OF_BITS_DISCLOSED;
         }
 
         return deviceNotNull && validLength && validRequestPattern && state == STATE_SPUN;
@@ -256,7 +250,7 @@ public class FourBitTwoDisclosureDeviceUnlocker extends DeviceUnlocker {
      *  log 'invalid poke' and the current state unlock is in.
      */
     private static void doPoke() {
-        if(isValidPoke()) {
+        if (isValidPoke()) {
             CharSequence patternToPoke = getPokedPattern();
             appendTrace("poke : Poking with pattern:", patternToPoke);
             dev.poke(patternToPoke);
@@ -265,19 +259,19 @@ public class FourBitTwoDisclosureDeviceUnlocker extends DeviceUnlocker {
     }
 
     /**
-     * Returns boolean value representing validity of last peek request
+     * Returns boolean value representing validity of last peek request.
      * @return true if the last peek CharSequence pattern was valid to poke, false if the last peek CharSequence pattern was invalid to poke
      */
     private static boolean isValidPoke() {
         boolean isValid;
         String validBits = "TF";
-        if(state != STATE_PEEKED){
+        if (state != STATE_PEEKED) {
             appendTrace("isValidPoke : Poke is not valid, current state does not equal STATE_PEEKED");
             isValid = false;
-        } else if(!validBits.contains(String.valueOf(changeBitTo))) {
+        } else if (!validBits.contains(String.valueOf(changeBitTo))) {
             appendTrace("isValidPoke : Bit to change to is invalid: ", String.valueOf(changeBitTo));
             isValid = false;
-        } else if(peekedPattern == null) {
+        } else if (peekedPattern == null) {
             appendTrace("isValidPoke : Peeked Pattern is null and cannot determine poke pattern", peekedPattern);
             isValid = false;
         } else {
@@ -288,16 +282,16 @@ public class FourBitTwoDisclosureDeviceUnlocker extends DeviceUnlocker {
     }
 
     /**
-     * Returns sequence of characters based on the last Peek by converting everything to ChangeBitTo
+     * Returns sequence of characters based on the last Peek by converting everything to ChangeBitTo.
      * @return CharSequence representing TRUE or FALSE, represented by ChangeBitTo, in respective places where a ? appeared in CharSequence used in last called doPeek
      */
     private static CharSequence getPokedPattern() {
         StringBuilder newPattern = new StringBuilder();
-        for(int i = 0; i < peekedPattern.length(); i++) {
+        for (int i = 0; i < peekedPattern.length(); i++) {
             char bit = peekedPattern.charAt(i);
 
             // if the bit peeked was a T or F...
-            if(bit == TRUE || bit == FALSE) {
+            if (bit == TRUE || bit == FALSE) {
                 // change to something else.
                 newPattern.append(changeBitTo);
             } else {
@@ -307,22 +301,26 @@ public class FourBitTwoDisclosureDeviceUnlocker extends DeviceUnlocker {
         return newPattern.toString();
     }
     /**
-     * Get a list of possible permutations for a valid doPeek
+     * Get a list of possible permutations for a valid doPeek.
      * @return list of CharSequences that can be used for a valid doPeek
      */
     private static List<CharSequence> getPermutations() {
         List<CharSequence> permutations = new ArrayList<CharSequence>();
-        permutation(0,0,new StringBuilder(),permutations);
+        permutation(0, 0, new StringBuilder(), permutations);
         return permutations;
     }
 
     /**
-     * 0-1 Knapsack algorithm to grab permutations of valid peeks
+     * 0-1 Knapsack algorithm to grab permutations of valid peeks.
+     * @param index current position in the generated CharSequence
+     * @param used number of peek '?' characters used in this generated CharSequence
+     * @param accumulator the accumulated characters generating this CharSequence
+     * @param perms the list of permutations to add a generated CharSequence to
      */
-    private static void permutation(int index, int used, StringBuilder accumulator, List<CharSequence> perms) {
+    private static void permutation(final int index, final int used, final StringBuilder accumulator, final List<CharSequence> perms) {
         // return if we have reached the end of this permutation
-        if (accumulator.length() >= numOfBits) {
-            if (used == numOfBitsDisclosed) {
+        if (accumulator.length() >= NUM_OF_BITS) {
+            if (used == NUM_OF_BITS_DISCLOSED) {
                 perms.add(accumulator.toString());
             }
             return;
@@ -334,7 +332,7 @@ public class FourBitTwoDisclosureDeviceUnlocker extends DeviceUnlocker {
         // use up a ?
         if (used < 2) {
             copy.append("?");
-            permutation(index + 1,used + 1,copy, perms);
+            permutation(index + 1, used + 1, copy, perms);
         }
         // do not use a ?
         accumulator.append("-");
@@ -347,7 +345,7 @@ public class FourBitTwoDisclosureDeviceUnlocker extends DeviceUnlocker {
         traceLog = new StringBuilder();
     }
     /**
-     * Appends a specified message to the trace log in DeviceUnlocker
+     * Appends a specified message to the trace log in DeviceUnlocker.
      * @param message the message to be appended.
      */
     private static void appendTrace(final String message) {
@@ -361,17 +359,17 @@ public class FourBitTwoDisclosureDeviceUnlocker extends DeviceUnlocker {
      * @param methodCallMessage Message for the method call
      * @param deviceBits the bits in the device returned.
      */
-    private static void appendTrace(String methodCallMessage, CharSequence deviceBits) {
+    private static void appendTrace(final String methodCallMessage, final CharSequence deviceBits) {
         // Produce a message that looks like:
         //   [string...] (T - F -  ... - T - F)\n
-        if (deviceBits == null) {
-            deviceBits = "";
+        if (deviceBits != null) {
+            traceLog.append(methodCallMessage);
+            traceLog.append(" (");
+            for (int i = 0; i < deviceBits.length(); i++) {
+                traceLog.append(deviceBits.charAt(i));
+            }
+            traceLog.append(")\n");
         }
-        traceLog.append(methodCallMessage);
-        traceLog.append(" (");
-        for(int i = 0; i < deviceBits.length(); i++) {
-            traceLog.append(deviceBits.charAt(i));
-        }
-        traceLog.append(")\n");
     }
 }
+
