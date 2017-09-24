@@ -90,6 +90,28 @@ Code sharing method: Github Git repository (Kendra and Max have both volunteered
 -----------------------------------------------------------------------------------------------------------------------------
 
 9/14 7:00-7:35pm - Wrote implementations for showTrace() and appendTrace() methods. (Alice)
+Kendra starts the meeting with where we are at.
+Hoyt informed us that he has pseudo-code for the unlock algorithm he volunteered to implement, but wants our input on some design choices.
+Maxwell, Hoyt, Kendra, and Dan all go back and forth on design choices for throwing or not throwing an IllegalArgumentException for attempting to poke or peek with a CharSequence that are designed in such a way that the behavior is unspecified in the documentation.
+All but Alice unanimously agreed that it would be best if we append to the trace that illegal arguments were passed, and to not actually call the method from Device, to avoid unspecified behavior, but also let the user know what went wrong.
+Dan suggested the possibility of throwing the exception to make it obvious that the program did something unspecified, but Kendra and the others pointed out that this is our implementation of the Device Unlocker, and this is the code our class will use, not the user's code. Dan agreed.
+Hoyt then started to write pseudo code onto a whiteboard while Kendra, Maxwell, and Dan tried to give support.
+Some questions that Hoyt had were about the specific parameters of the CharSequence used in Peek and Poke.
+Some of the questions pertaining to this was:
+
+	* Do we include the brackets like in project description?
+
+		* Answer is no, according to Dr Paul in class when Dan asked.
+		* The sequence should be the same number of characters as the bits stored in the device. In our implementation it will be 4.
+		* We can only peek two bits in our implementation, and we can only poke what we peeked.
+
+Dan suggested we implement logic to be scalable with the insight our customer might want us to make a 5BitThreeDisclosedDeviceUnlocker, and to make this process even easier for next time.
+To do this, we decided we should make a method called "getSequences" that returns a list of all possible CharSequences based on the number of bits disclosed and the number of bits held by the device.
+
+	* Dan volunteered to implement this method "getSequences"
+
+
+Dan also volunteered to refactor his implementation of Device to fit specifications on API, and use reflection on extra fields.
 
 9/16 11:38       - Fixed logging spin/peek/pokes when the Device methods were not being called. (Alice)
 
@@ -105,7 +127,7 @@ Good:
 	√ Quick response
 	√ Time scheduling
 	√√ Pair programming
-	√ Using Git as version control
+	√√ Using Git as version control
 	√√ Organization
 	√√ Hangouts
 	√ Everyone contributed code
