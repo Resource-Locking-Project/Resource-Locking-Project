@@ -3,6 +3,20 @@ In class our team gathered contact information, set up a group email chain for c
 the time to get together and complete the team questionnaire. I (Kendra) had set up the email chain and a team account with
 a team repository to work on the project.
 
+9/5 -
+
+11:28am Communication method: email (Kendra collected email addresses) + Hangouts calls (tentatively scheduled for Sunday, no time specified)
+
+Code sharing method: Github Git repository (Kendra and Max have both volunteered to set up our team repository)
+
+11:46am Kendra has sent out the email and created a team GitHub account for this project. No repository is up at the moment, but she will send an email when she creates it.
+
+-----------------------------------------------------------------------------------------------------------------------------
+
+9/7
+
+10:00am to 10:20am: In-class progress report
+
 -----------------------------------------------------------------------------------------------------------------------------
 
 9/10 Hangouts call log:
@@ -62,10 +76,103 @@ a team repository to work on the project.
       Daniel—   test cases
       Kendra—   Java Strings
 
+
   Kendra: pull request for headers in approx. an hour
   Call ends at 12:53pm
 
 -----------------------------------------------------------------------------------------------------------------------------
 
-9/14 7:00-7:35pm - Wrote implementations for showTrace() and appendTrace() methods. (Alice)
-9/16 11:38       - Fixed logging spin/peek/pokes when the Device methods were not being called. (Alice)
+9/12 in-class group meeting:
+
+* Discussed adding a second appendTrace() method
+* The majority of the conversation was talking about optimizing the unlock algorithm.
+
+-----------------------------------------------------------------------------------------------------------------------------
+
+9/14 7:00-7:35pm:
+
+Kendra starts the meeting with where we are at.
+Hoyt informed us that he has pseudo-code for the unlock algorithm he volunteered to implement, but wants our input on some design choices.
+Maxwell, Hoyt, Kendra, and Dan all go back and forth on design choices for throwing or not throwing an IllegalArgumentException for attempting to poke or peek with a CharSequence that are designed in such a way that the behavior is unspecified in the documentation.
+All but Alice unanimously agreed that it would be best if we append to the trace that illegal arguments were passed, and to not actually call the method from Device, to avoid unspecified behavior, but also let the user know what went wrong.
+Dan suggested the possibility of throwing the exception to make it obvious that the program did something unspecified, but Kendra and the others pointed out that this is our implementation of the Device Unlocker, and this is the code our class will use, not the user's code. Dan agreed.
+Hoyt then started to write pseudo code onto a whiteboard while Kendra, Maxwell, and Dan tried to give support.
+Some questions that Hoyt had were about the specific parameters of the CharSequence used in Peek and Poke.
+Some of the questions pertaining to this was:
+
+	* Do we include the brackets like in project description?
+
+		* Answer is no, according to Dr Paul in class when Dan asked.
+		* The sequence should be the same number of characters as the bits stored in the device. In our implementation it will be 4.
+		* We can only peek two bits in our implementation, and we can only poke what we peeked.
+
+Dan suggested we implement logic to be scalable with the insight our customer might want us to make a 5BitThreeDisclosedDeviceUnlocker, and to make this process even easier for next time.
+To do this, we decided we should make a method called "getSequences" that returns a list of all possible CharSequences based on the number of bits disclosed and the number of bits held by the device.
+
+	* Dan volunteered to implement this method "getSequences"
+
+
+Dan also volunteered to refactor his implementation of Device to fit specifications on API, and use reflection on extra fields.
+
+-----------------------------------------------------------------------------------------------------------------------------
+
+9/17 Hangouts call at 10:00am-11:15am:
+
+* FourBitTwoDisclosureDeviceUnlocker.java is essentially finished (minor code improvements pending)
+* Retrospective:
+
+Good:
+	√√√ Communications
+	√ Quick response
+	√ Time scheduling
+	√√ Pair programming
+	√√ Using Git as version control
+	√√ Organization
+	√√ Hangouts
+	√ Everyone contributed code
+	√ Retrospective
+	√ Code review
+	√ Meetings
+Bad:
+	√ Chaotic
+	√ Conflict of responsibilities
+	√ Screen-share pair programming didn’t happen
+	√ Git is difficult to use
+	√ Code review-- more people need to review code
+	√ Dan over-talking
+	√ Workflow
+Kudos:
+	√√ Kendra for organization
+	√ Dan for organization
+	√ Hoyt for getting more comfortable with Git
+	√√ Daniel for the testing classes
+	√√√ Alice for the logs
+	√√ Alice for documentation
+	√√ Hoyt for writing our algorithm
+	√√ Max for commitment despite circumstances
+	√ Kendra for committing time
+Changes:
+	√ Slack
+	√ Code-review/static analysis tools
+	√ Better/more pair programming
+	√ Kanban on Git/Git issues
+
+Analysis:
+Dan: we have a good idea of what went wrong, but we don’t really have any ideas for how to improve it.
+	Kendra: this might be partly because we have no idea if we’re staying in this group.
+	Hoyt: it was nice to be in a group where everyone did work.
+
+
+9/17 second call at 6:00pm-6:36pm
+
+* Used Google Hangouts and Google Docs to write assessment and reflection collaboratively. Submitted deliverable at 6:36pm.
+
+-----------------------------------------------------------------------------------------------------------------------------
+
+9/19 in-class group meeting (methodology retrospective):
+
+* It was not agile, because we were not in constant contact with the customer.
+* We used the retrospective from Scrum, however.
+* Test-driven development and pair programming were attempted, similar to Scrum.
+
+-----------------------------------------------------------------------------------------------------------------------------
