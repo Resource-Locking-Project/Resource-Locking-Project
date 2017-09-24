@@ -44,8 +44,8 @@ September 7, 2017:
       Hoyt—     algorithm / unlock()
       Alice—    logging / appendTrace() / showTrace()
 
-    Pair programming times (note: everyone mentioned weekend availability via Hangouts):
-      Dan—      Unknown (Tutoring). Should be available 7pm-10pm all weekdays.
+
+Dan—      Unknown (Tutoring). Should be available 7pm-10pm all weekdays.
       Kendra—   Noon-4pm Tuesday/Thursday
       Maxwell—  not present.
       Hoyt—     Noon-1:30pm Tuesday/Thursday
@@ -76,6 +76,7 @@ September 7, 2017:
       Daniel—   test cases
       Kendra—   Java Strings
 
+
   Kendra: pull request for headers in approx. an hour
   Call ends at 12:53pm
 
@@ -89,7 +90,61 @@ September 7, 2017:
 -----------------------------------------------------------------------------------------------------------------------------
 
 9/14 7:00-7:35pm - Wrote implementations for showTrace() and appendTrace() methods. (Alice)
+
 9/16 11:38       - Fixed logging spin/peek/pokes when the Device methods were not being called. (Alice)
+
+-----------------------------------------------------------------------------------------------------------------------------
+
+Call 2017-09-17 10:00am-11:15am:
+
+* FourBitTwoDisclosureDeviceUnlocker.java is essentially finished (minor code improvements pending)
+* Retrospective:
+
+Good:
+	√√√ Communications
+	√ Quick response
+	√ Time scheduling
+	√√ Pair programming
+	√ Using Git as version control
+	√√ Organization
+	√√ Hangouts
+	√ Everyone contributed code
+	√ Retrospective
+	√ Code review
+	√ Meetings
+Bad:
+	√ Chaotic
+	√ Conflict of responsibilities
+	√ Screen-share pair programming didn’t happen
+	√ Git is difficult to use
+	√ Code review-- more people need to review code
+	√ Dan over-talking
+	√ Workflow
+Kudos:
+	√√ Kendra for organization
+	√ Dan for organization
+	√ Hoyt for getting more comfortable with Git
+	√√ Daniel for the testing classes
+	√√√ Alice for the logs
+	√√ Alice for documentation
+	√√ Hoyt for writing our algorithm
+	√√ Max for commitment despite circumstances
+	√ Kendra for committing time
+Changes:
+	√ Slack
+	√ Code-review/static analysis tools
+	√ Better/more pair programming
+	√ Kanban on Git/Git issues
+
+Analysis:
+Dan: we have a good idea of what went wrong, but we don’t really have any ideas for how to improve it.
+	Kendra: this might be partly because we have no idea if we’re staying in this group.
+	Hoyt: it was nice to be in a group where everyone did work.
+
+
+Second call 6:00pm-6:36pm
+
+* Used Google Hangouts and Google Docs to write assessment and reflection collaboratively. Submitted deliverable at 6:36pm.
 
 -----------------------------------------------------------------------------------------------------------------------------
 
