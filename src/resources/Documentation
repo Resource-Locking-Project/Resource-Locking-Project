@@ -3,6 +3,20 @@ In class our team gathered contact information, set up a group email chain for c
 the time to get together and complete the team questionnaire. I (Kendra) had set up the email chain and a team account with
 a team repository to work on the project.
 
+September 5, 2017
+
+11:28am Communication method: email (Kendra collected email addresses) + Hangouts calls (tentatively scheduled for Sunday, no time specified)
+
+Code sharing method: Github Git repository (Kendra and Max have both volunteered to set up our team repository)
+
+11:46am Kendra has sent out the email and created a team GitHub account for this project. No repository is up at the moment, but she will send an email when she creates it.
+
+-----------------------------------------------------------------------------------------------------------------------------
+
+September 7, 2017:
+
+10:00am to 10:20am: In-class progress report
+
 -----------------------------------------------------------------------------------------------------------------------------
 
 9/10 Hangouts call log:
@@ -67,5 +81,22 @@ a team repository to work on the project.
 
 -----------------------------------------------------------------------------------------------------------------------------
 
+9/12 in-class group meeting:
+
+* Discussed adding a second appendTrace() method
+* The majority of the conversation was talking about optimizing the unlock algorithm.
+
+-----------------------------------------------------------------------------------------------------------------------------
+
 9/14 7:00-7:35pm - Wrote implementations for showTrace() and appendTrace() methods. (Alice)
 9/16 11:38       - Fixed logging spin/peek/pokes when the Device methods were not being called. (Alice)
+
+-----------------------------------------------------------------------------------------------------------------------------
+
+9/19 in-class group meeting (methodology retrospective):
+
+* It was not agile, because we were not in constant contact with the customer.
+* We used the retrospective from Scrum, however.
+* Test-driven development and pair programming were attempted, similar to Scrum.
+
+-----------------------------------------------------------------------------------------------------------------------------
