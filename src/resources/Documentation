@@ -89,7 +89,8 @@ Code sharing method: Github Git repository (Kendra and Max have both volunteered
 
 -----------------------------------------------------------------------------------------------------------------------------
 
-9/14 7:00-7:35pm - Wrote implementations for showTrace() and appendTrace() methods. (Alice)
+9/14 7:00-7:35pm:
+
 Kendra starts the meeting with where we are at.
 Hoyt informed us that he has pseudo-code for the unlock algorithm he volunteered to implement, but wants our input on some design choices.
 Maxwell, Hoyt, Kendra, and Dan all go back and forth on design choices for throwing or not throwing an IllegalArgumentException for attempting to poke or peek with a CharSequence that are designed in such a way that the behavior is unspecified in the documentation.
@@ -112,8 +113,6 @@ To do this, we decided we should make a method called "getSequences" that return
 
 
 Dan also volunteered to refactor his implementation of Device to fit specifications on API, and use reflection on extra fields.
-
-9/16 11:38       - Fixed logging spin/peek/pokes when the Device methods were not being called. (Alice)
 
 -----------------------------------------------------------------------------------------------------------------------------
 
